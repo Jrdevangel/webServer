@@ -18,5 +18,7 @@ This is the frontend for the WebServer project, built with HTML and Bootstrap fo
 3. You will see the responsive layout with Bootstrap styling applied.
 
 ## Project Structure
-frontend/
-│── index.html # Main HTML file.
+
+# frontend/
+
+│── index.html # Main HTML file
