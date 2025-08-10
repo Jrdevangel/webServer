@@ -1,22 +1,48 @@
 # WebServer FrontEnd
 
-This is the frontend for the WebServer project, built with HTML and Bootstrap for a responsive and modern interface.
+This is the front-end for the WebServer project, built using **HTML** and **Bootstrap 5**.  
+
+It provides a user interface for interacting with the back-end Spring Boot server.
 
 ## Features
-- **Bootstrap-based layout** for responsive design.
-- **Navigation bar** with Home and Login links.
-- **Hero section** with welcome text.
-- **Footer** with project information.
+- **index.html**: Main landing page with Bootstrap layout.
+
+- **dashboard.html**: Admin dashboard that fetches and displays data from the backend endpoint `/admin/dashboard`.
+
+- **Responsive design**: Fully responsive layout using Bootstrap.
+
+- **Live Server support**: Can be run locally using the VS Code Live Server extension.
+
+## Setup
+
+1. Clone this repository or download the files.
+
+2. Open the `FrontEnd` folder in **VS Code**.
+
+3. Install the Live Server extension (if not already installed).
+
+4. Right-click `index.html` or `dashboard.html` → **"Open with Live Server"**.
+
+5. Ensure the backend server is running on `http://localhost:8080` to fetch data.
+
+## File Structure
+
+FrontEnd/
+├── assets/          # Images or other media files
+├── js/              # JavaScript files
+├── index.html       # Main landing page
+├── dashboard.html   # Admin dashboard page
+└── Readme.md        # This file
+
+## How to Run
+1. Open the project folder in **Visual Studio Code**.
+
+2. Install the **Live Server** extension.
+
+3. Right-click on `index.html` and select **"Open with Live Server"**.
+4. Your browser will open showing the current FrontEnd.
 
 ## Technologies Used
 - HTML5
+
 - Bootstrap 5
-
-## How to Run
-1. Clone the repository or download the project files.
-2. Open the `index.html` file with **Live Server** in Visual Studio Code or directly in your browser.
-3. You will see the responsive layout with Bootstrap styling applied.
-
-## Project Structure
-frontend/
-│── index.html # Main HTML file.
