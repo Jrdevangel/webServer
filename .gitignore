@@ -1,0 +1,18 @@
+# Archivos de macOS
+.DS_Store
+
+# Archivos de sistema
+Thumbs.db
+
+# Archivos de logs
+*.log
+
+# Dependencias (si usas Node.js)
+node_modules/
+
+# Configuración de editores (VSCode, IntelliJ, etc.)
+.vscode/
+.idea/
+
+# Archivos temporales
+*.tmp
