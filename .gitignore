@@ -1,18 +1,44 @@
-# Archivos de macOS
-.DS_Store
+# ======================================
+# Maven / Gradle build
+# ======================================
+target/
+build/
+out/
 
-# Archivos de sistema
+# ======================================
+# Logs
+# ======================================
+*.log
+*.log.*
+
+# ======================================
+# IntelliJ IDEA / Eclipse / VSCode
+# ======================================
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode/
+
+# ======================================
+# OS files
+# ======================================
+.DS_Store
 Thumbs.db
 
-# Archivos de logs
-*.log
+# ======================================
+# Spring Boot sensitive configs
+# ======================================
+application.properties
+application.yml
+application-*.yml
+application-*.properties
 
-# Dependencias (si usas Node.js)
-node_modules/
-
-# Configuración de editores (VSCode, IntelliJ, etc.)
-.vscode/
-.idea/
-
-# Archivos temporales
+# ======================================
+# Other
+# ======================================
+*.bak
 *.tmp
