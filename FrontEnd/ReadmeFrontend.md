@@ -1,31 +1,35 @@
 # WebServer FrontEnd
 
-This is the frontend of the **WebServer** project, built with **Bootstrap** for a clean and responsive design.
+This folder contains the frontend part of the WebServer project, built using **Bootstrap 5**. It provides the user interface for the backend server implemented in Java Spring Boot.
 
 ## Features
 
-- Responsive design using **Bootstrap**.
-- Home page (`index.html`) with welcome message.
-- Admin dashboard page (`dashboard.html`) for administrator view.
-- About page (`about.html`) with project and developer information.
+- **Responsive Design:** All pages are fully responsive thanks to Bootstrap.
 
-## Project Structure
+- **Home Page:** Main landing page with project introduction.
+
+- **Admin Dashboard:** Admin panel connected to backend authentication.
+
+- **About Page:** Information about the project and author.
+
+- **Structured Folder Layout:** Organized for scalability and maintainability.
+
+- **JavaScript Integration:** Prepared to connect with backend endpoints via `main.js`.
+
+## Folder Structure
 
 FrontEnd/
-├── assets/        # Images or other media files
-├── js/            # JavaScript files
-├── index.html     # Main landing page
-├── dashboard.html # Admin dashboard page
-├── about.html     # About project and developer
-└── ReadmeFrontend.md # This file
+├── assets/           # Images or other media files
+├── js/               # JavaScript files (e.g., main.js)
+├── index.html        # Main landing page
+├── dashboard.html    # Admin dashboard page
+├── about.html        # About page with project/author info
+└── ReadmeFrontend.md # This file (documentation for the FrontEnd)
 
 ## How to Run
 
-Open the project folder in Visual Studio Code.
+1. Open index.html in your browser (or use Live Server in VS Code for live preview).
 
-Right-click on any .html file (e.g., index.html) and choose "Open with Live Server".
+2. Navigate through the pages (index.html, dashboard.html, about.html) to see the frontend.
 
-Navigate through the pages:
-http://localhost:5500/index.html
-http://localhost:5500/dashboard.html
-http://localhost:5500/about.html
+3. Backend connection (via main.js) will allow future interaction with the Spring Boot server.
