@@ -2,7 +2,7 @@ const BASE_URL = "http://localhost:8080";
 
 async function fetchHomeMessage() {
     try {
-        const response = await fetch(`${BASE_URL}/`);
+        const response = await fetch(`${BASE_URL}/admin/dashboard`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
