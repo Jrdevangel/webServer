@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.webserver.service.DashboardService;
 
@@ -19,6 +20,11 @@ public class WebServerController {
     
     public WebServerController(DashboardService dashboardService) {
         this.dashboardService = dashboardService;
+    }
+
+    @GetMapping("/")
+    public RedirectView redirectToHome() {
+        return new RedirectView("/home");
     }
 
     @GetMapping("/home")
