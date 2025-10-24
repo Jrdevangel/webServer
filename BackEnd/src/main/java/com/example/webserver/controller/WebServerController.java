@@ -32,7 +32,7 @@ public class WebServerController {
         return "Welcome, jrdev_angel!";
     }
 
-    @GetMapping("dashboard")
+    @GetMapping("/dashboard")
     public Map<String, String> getDashboardMenssage(Principal user) {
         String name = (user != null) ? user.getName() : "Guest";
         String message = dashboardService.dashboardMessage(name);
