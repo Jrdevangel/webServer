@@ -39,4 +39,39 @@ async function fetchDashboardMessage() {
 document.addEventListener("DOMContentLoaded", () => {
     fetchHomeMessage();
     fetchDashboardMessage();
+    
+    if (loginForm) {
+            loginForm.addEventListener("submit", async (event) => {
+                event.preventDefault();
+
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;                 
+                   
+                try {
+                    const response = await fetch(`${BASE_URL}/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ username, password }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log("Login success:", data);
+
+                    if (data.token) {
+                        localStorage.setItem("authToken", data.token);
+                    }
+
+                    window.location.href = "dashboard.html";
+                } catch (error) {
+                    console.error("Login Failed:", error);
+                    alert("Login failed. Please check your credentials and try again.")
+                }
+            });
+    }
 });
