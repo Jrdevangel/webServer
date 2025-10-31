@@ -32,4 +32,8 @@ FrontEnd/
 
 2. Navigate through the pages (index.html, dashboard.html, about.html) to see the frontend.
 
-3. Backend connection (via main.js) will allow future interaction with the Spring Boot server.
+3. Ensure your Spring Boot backend is running on ´http://localhost:8080`.
+
+4. Interact with backend endpoints via the frontend (`main.js` handles API calls).
+
+5. After authentication, the user is redirected to the dashboard.
