@@ -32,13 +32,6 @@ public class WebServerController {
         return "Welcome, jrdev_angel!";
     }
 
-    @GetMapping("/dashboard")
-    public Map<String, String> getDashboardMenssage(Principal user) {
-        String name = (user != null) ? user.getName() : "Guest";
-        String message = dashboardService.dashboardMessage(name);
-        return Map.of("message", message);
-    }
-
 @PostMapping("/dashboard")
 public Map<String, String> postDashboardMessage(Principal user) {
     String name = (user != null) ? user.getName() : "Guest";
