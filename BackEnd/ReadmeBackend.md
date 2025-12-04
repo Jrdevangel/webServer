@@ -20,17 +20,22 @@ Built step by step following **DevOps best practices**.
 webServer/
 │
 ├── src/main/java/com/example/webserver
-│ ├── WebServerApplication.java # Main Spring Boot application
-│ ├── WebServerController.java # REST controller for endpoints
-│ ├── SecurityConfig.java # Security configuration
-│ └── service/
-│ └── DashboardService.java # Service logic for the dashboard
+│   ├── WebServerApplication.java      # Main Spring Boot application
+│   ├── controller/
+│   │     ├── WebServerController.java # REST controller
+│   │     └── LoginController.java     # Login endpoint + Thymeleaf view
+│   ├── config/
+│   │     └── SecurityConfig.java      # Spring Security configuration
+│   └── service/
+│         └── DashboardService.java    # Service layer
 │
 ├── src/main/resources
-│ └── application.properties # Application configuration
+│   ├── templates/
+│   │     └── login.html               # Thymeleaf login view
+│   └── application.properties          # Configuration
 │
-├── pom.xml # Maven dependencies
-└── README.md # Project documentation
+├── pom.xml                             # Maven dependencies
+└── README.md                           # Project documentation
 
 ---
 
@@ -38,4 +43,5 @@ webServer/
 - **Java 17**
 - **Maven 3.9+**
 - **Spring Boot 3.5.0**
+- **Docker Desktop** (For the database)
 - A terminal (MacOS)
