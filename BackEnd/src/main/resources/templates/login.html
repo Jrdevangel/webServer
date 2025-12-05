@@ -13,21 +13,21 @@
         <div class="card shadow-sm">
           <div class="card-body">
             <h3 class="card-title text-center mb-4">Login</h3>
-            <form id="loginForm" action="/login" method="POST">
+            <form id="loginForm" th:action="@{/login}" method="POST">
               <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" required>
+                <input type="text" class="form-control" id="username" name="username" autocomplete="username" required>
               </div>
               <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+                <input type="password" class="form-control" id="password" name="password" autocomplete="current-password" required>
               </div>
               <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
-            <p class="mt-3 text-center text-danger">
+            <div class="mt-3 text-center">
               <span th:if="${param.error}">Invalid username or password.</span>
               <span th:if="${param.logout}">You have been logged out successfully.</span>
-            </p>
+            </div>
           </div>
         </div>
       </div>
