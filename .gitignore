@@ -47,3 +47,34 @@ application-*.properties
 # Compiled Java classes
 *.class
 # ======================================
+
+# ============================
+# === Spring Security (default) ===
+# ============================
+spring.security.user.name=jrdev_angel
+spring.security.user.password=reggaeton
+
+# ============================
+# === Application Users ===
+# ============================
+app.security.admin.username=jrdev_Angel
+app.security.admin.password=adminjrdev_Angel
+
+app.security.user.username=angel
+app.security.user.password=userserver
+
+# ============================
+# === PostgreSQL Connection ===
+# ============================
+spring.datasource.url=jdbc:postgresql://localhost:5432/webserverdb
+spring.datasource.username=jrdev_angel
+spring.datasource.password=iMacniaco
+
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.connection-timeout=20000
+
+# ============================
+# === JPA / Hibernate ===
+# ============================
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
