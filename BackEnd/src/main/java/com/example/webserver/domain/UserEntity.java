@@ -20,6 +20,16 @@ public class UserEntity {
     @Column(nullable = false)
     private Role role;
 
+    protected UserEntity() {
+
+    }
+
+    public UserEntity(String username, String password, Role role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+    
     public Long getId() {
         return id;
     }
