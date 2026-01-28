@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://prod-db-server:5432/webserver_prod
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
