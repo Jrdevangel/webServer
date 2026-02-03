@@ -11,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+
 public class SecurityConfig {
 
     @Value("${app.security.admin.username}")
@@ -18,12 +19,6 @@ public class SecurityConfig {
 
     @Value("${app.security.admin.password}")
     private String adminPassword;
-
-    @Value("${app.security.user.username}")
-    private String userUsername;
-
-    @Value("${app.security.user.password}")
-    private String userPassword;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
