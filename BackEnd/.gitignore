@@ -33,6 +33,8 @@ Thumbs.db
 # Environment / secrets
 # ======================================
 .env
+*.env
+application-local.yml.orig
 
 # ======================================
 # Temporary files
