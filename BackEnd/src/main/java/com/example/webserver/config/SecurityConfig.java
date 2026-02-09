@@ -1,6 +1,5 @@
 package com.example.webserver.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,17 +13,17 @@ import org.springframework.security.web.SecurityFilterChain;
 
 public class SecurityConfig {
 
-    @Value("${app.security.admin.username}")
-    private String adminUsername;
-
-    @Value("${app.security.admin.password}")
-    private String adminPassword;
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers(
+                    "/login",
+                                "/health",
+                                 "/css/**", 
+                                 "/js/**", 
+                                 "/images/**"
+                ) .permitAll()
                 .requestMatchers("/dashboard").hasRole("ADMIN")
                 .requestMatchers("/profile").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
@@ -32,18 +31,6 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
-                .successHandler((request, response, authentication) -> {
-                    var auth = authentication.getAuthorities()
-                                             .iterator()
-                                             .next()
-                                             .getAuthority();
-
-                    if (auth.equals("ROLE_ADMIN")) {
-                        response.sendRedirect("/dashboard");
-                    } else {
-                        response.sendRedirect("/profile");
-                    }
-                })
                 .failureUrl("/login?error=true")
                 .permitAll()
             )
@@ -54,7 +41,6 @@ public class SecurityConfig {
             );
 
         return http.build();
-
     } 
         
         @Bean
