@@ -1,45 +1,113 @@
 # WebServer Project
 
-This repository contains the **WebServer** project, which includes both the backend (Java Spring Boot) and the frontend (Bootstrap 5).  
-It is designed to demonstrate a modular full-stack web application structure with clear separation between server-side and client-side logic.
+Backend service built with Spring Boot following a clean repository abstraction and profile-based persistence strategy.
 
-## 📁 Project Structure
+## 🚀 Tech Stack
 
-WebServerProject/
-├── BackEnd/ # Java Spring Boot backend (REST API, controllers, security)
-├── FrontEnd/ # Bootstrap-based frontend (HTML, JS, CSS)
-├── pom.xml # Maven project configuration
-├── .gitignore # Ignored files and folders
-└── README.md # This file (project overview)
-
-## 🚀 Backend
-
-The backend is implemented in **Spring Boot** and provides REST endpoints for authentication and content delivery.  
-→ See [`BackEnd/ReadmeBackend.md`](./BackEnd/ReadmeBackend.md) for more details.
-
-## 💻 Frontend
-
-The frontend is built using **Bootstrap 5**, offering a responsive and modern UI that interacts with the backend via `main.js`.  
-→ See [`FrontEnd/ReadmeFrontend.md`](./FrontEnd/ReadmeFrontend.md) for more details.
-
-## 🧩 Technologies Used
-
-- **Java 17 / Spring Boot**
-- **Maven**
-- **Bootstrap 5**
-- **JavaScript (ES6+)**
-- **HTML5 / CSS3**
-
-## 🛠 How to Run
-
-1. **Backend:**  
-   - Open the `/BackEnd` folder.  
-   - Run the Spring Boot application (e.g., via your IDE or `mvn spring-boot:run`).
-
-2. **Frontend:**  
-   - Open `/FrontEnd/index.html` in your browser (or use Live Server in VS Code).
+* Java 21
+* Spring Boot
+* Spring Data JPA
+* H2 (dev/db testing)
+* Maven
 
 ---
 
-📚 *Maintained by Ángel Ponce Reguera*  
-© 2025 — WebServer Project
+# 🏗 Architecture Overview
+
+The project follows a layered architecture:
+
+```
+Controller → Service → Repository (Interface) → Implementation
+```
+
+The persistence layer is abstracted through a domain-level `UserRepository` contract, allowing multiple implementations depending on the active Spring profile.
+
+---
+
+# 🔄 Profile-Based Repository Strategy
+
+Two persistence strategies are available:
+
+## `dev` profile
+
+* Uses `InMemoryUserRepository`
+* No database required
+* Fast startup
+* Ideal for development and testing
+
+## `db` profile
+
+* Uses `JpaUserRepository`
+* Backed by H2 database
+* Enables full JPA persistence
+* Suitable for integration testing and future production DB integration
+
+Profiles are activated via:
+
+```bash
+-Dspring.profiles.active=dev
+```
+
+or
+
+```bash
+-Dspring.profiles.active=db
+```
+
+---
+
+# 📦 Repository Implementations
+
+## `UserRepository`
+
+Domain-level abstraction that defines the persistence contract.
+
+## `InMemoryUserRepository`
+
+* Activated with `@Profile("dev")`
+* Stores users in memory
+* Provides lightweight authentication support
+
+## `JpaUserRepository`
+
+* Activated with `@Profile("db")`
+* Extends Spring Data JPA
+* Persists users in H2 database
+
+---
+
+# 🧪 Running the Application
+
+## Development Mode
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+## Database Mode
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=db
+```
+
+---
+
+# 📌 Current Status
+
+* Clean repository abstraction implemented
+* Profile-based persistence fully functional
+* Legacy configuration removed
+* Ready for PostgreSQL or other production database integration
+
+---
+
+# 🔜 Next Improvements
+
+* PostgreSQL integration
+* Docker containerization
+* CI/CD pipeline
+* Unit and integration test coverage
+
+---
+
+This project demonstrates backend architecture evolution from basic configuration to structured, profile-driven persistence design.
