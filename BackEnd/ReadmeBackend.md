@@ -1,56 +1,99 @@
-# 🚀 WebServer Backend
+# Backend Module
 
-A secure and modular **Spring Boot backend** with authentication and an admin dashboard.  
-Built step by step following **DevOps best practices**.  
-
----
-
-## ✨ Features
-- ⚡ Built with **Spring Boot 3** & **Java 17**
-- 🔐 Authentication powered by **Spring Security**
-- 🌐 RESTful API endpoints
-- 🏗️ Modular and ready for expansion
-- 🎯 Prepared for **frontend integration**
-- 🗄️ Database integration planned (PostgreSQL/MySQL)
-- 👥 Role-based authentication (ADMIN / USER)
-- 🧾 Custom login with Thymeleaf
-- 🛡️ Protected routes per role
-- 🔀 Dynamic post-login redirection
-- 🚪 Secure logout handling
-- 🗃️ Ready for database-backed users
+Spring Boot backend module implementing user management with profile-driven persistence.
 
 ---
 
-## 📂 Project Structure
+# 🧩 Module Structure
 
-webServer/
-│
-├── src/main/java/com/example/webserver
-│   ├── WebServerApplication.java        # Main Spring Boot application
-│   ├── controller/
-│   │     ├── LoginController.java       # Login endpoint + Thymeleaf view
-│   │     └── DashboardController.java   # Admin dashboard controller (ADMIN only)
-│   │     └── ProfileController.java     # User profile controller (USER / ADMIN)
-│   ├── config/
-│   │     └── SecurityConfig.java        # Spring Security configuration
-│   └── service/
-│         └── DashboardService.java      # Service layer
-│
-├── src/main/resources
-│   ├── templates/
-│   │     └── login.html               # Thymeleaf login view
-│   │     └── dashboard.html
-│   │     └── user/
-│              └── profile.html
-│
-├── pom.xml                             # Maven dependencies
-└── README.md                           # Project documentation
+```
+com.example.webserver
+├── config
+├── controller
+├── repository
+│   ├── UserRepository.java
+│   ├── JpaUserRepository.java
+│   └── memory/InMemoryUserRepository.java
+├── service
+└── resources
+```
 
 ---
 
-## ⚙️ Requirements
-- **Java 17**
-- **Maven 3.9+**
-- **Spring Boot 3.5.0**
-- **Docker Desktop** (For the database)
-- A terminal (MacOS)
+# 🎯 Design Principles
+
+## 1. Repository Abstraction
+
+`UserRepository` defines the persistence contract.
+
+Business logic depends on the interface, not on a specific implementation.
+
+## 2. Profile-Based Injection
+
+Spring's `@Profile` annotation determines which repository implementation is injected:
+
+* `dev` → `InMemoryUserRepository`
+* `db`  → `JpaUserRepository`
+
+This avoids conditional logic in services and keeps the architecture clean.
+
+---
+
+# 🗄 Database Configuration
+
+When running under the `db` profile:
+
+* H2 database is enabled
+* Spring Data JPA is active
+* Data initialization runs conditionally
+
+`application.yml` contains environment-specific configuration.
+
+---
+
+# 🧠 Service Layer
+
+`UserService` contains business logic and interacts only with `UserRepository`.
+
+This ensures:
+
+* Loose coupling
+* Easier testing
+* Future DB portability
+
+---
+
+# 🔒 Security & Initialization
+
+* Legacy configuration classes removed
+* `DataInitializer` runs only when required profile is active
+* Application entry point simplified
+
+---
+
+# 🧪 Execution
+
+### Development
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+### With Database
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=db
+```
+
+---
+
+# 📈 Architectural Maturity
+
+The backend now supports:
+
+* Clean separation of concerns
+* Multiple persistence strategies
+* Profile-based environment configuration
+* JPA integration
+
+The module is prepared for migration to PostgreSQL or any production-grade relational database.
