@@ -25,10 +25,10 @@ public class UserService implements UserDetailsService {
                 new UsernameNotFoundException("User not found: " + username)
             );
 
-            return org.springframework.security.core.userdetails.User
+        return org.springframework.security.core.userdetails.User
             .withUsername(user.getUsername())
             .password(user.getPassword())
             .roles(user.getRole().name())
             .build();
-        }
+    }
 }
