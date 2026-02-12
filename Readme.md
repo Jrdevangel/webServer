@@ -1,5 +1,14 @@
 # WebServer Project
 
+![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?logo=springboot&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-Build-C71A36?logo=apachemaven&logoColor=white)
+![H2](https://img.shields.io/badge/Database-H2-0E83CD)
+![Architecture](https://img.shields.io/badge/Architecture-Profile--Based-orange)
+![Status](https://img.shields.io/badge/Status-Active-success)
+
+---
+
 Backend service built with Spring Boot following a clean repository abstraction and profile-based persistence strategy.
 
 ## 🚀 Tech Stack
