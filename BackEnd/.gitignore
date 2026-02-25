@@ -35,6 +35,7 @@ Thumbs.db
 .env
 *.env
 application-local.yml.orig
+application.yml.orig
 
 # ======================================
 # Temporary files

@@ -4,7 +4,9 @@ import com.example.webserver.domain.UserEntity;
 
 import java.util.Optional;
 
-public interface UserRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByUsername(String username);
 }

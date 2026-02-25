@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/webserver_db
+    username: jrdevangel
+    password: iMacniaco
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -16,5 +16,5 @@ spring:
 app:
   security:
     admin:
-      username: ${ADMIN_USERNAME}
-      password: ${ADMIN_PASSWORD}
+      username: admin
+      password: admin123
