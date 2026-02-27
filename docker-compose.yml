@@ -6,11 +6,25 @@ services:
     environment:
       POSTGRES_DB: webserver_db
       POSTGRES_USER: jrdevangel
-      POSTGRES_PASSWORD: iMacniaco
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: backend-webserver
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/webserver_db
+      SPRING_DATASOURCE_USERNAME: jrdevangel
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8000:8080"
 
 volumes:
   postgres_data:
