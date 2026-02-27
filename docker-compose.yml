@@ -1,4 +1,7 @@
+version: "3.9"
+
 services:
+
   postgres:
     image: postgres:16
     container_name: postgres-webserver
@@ -7,13 +10,11 @@ services:
       POSTGRES_DB: webserver_db
       POSTGRES_USER: jrdevangel
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   backend:
-    build: .
+    build: ./BackEnd
     container_name: backend-webserver
     restart: unless-stopped
     depends_on:
@@ -26,5 +27,31 @@ services:
     ports:
       - "8000:8080"
 
+  frontend:
+    build: ./FrontEnd
+    container_name: frontend-webserver
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - backend
+      - frontend
+
 volumes:
   postgres_data:
+  caddy_data:
+  caddy_config:
