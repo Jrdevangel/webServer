@@ -1,3 +1,4 @@
+```markdown
 # Backend Module
 
 Spring Boot backend module implementing user management with profile-driven persistence.
@@ -43,11 +44,29 @@ This avoids conditional logic in services and keeps the architecture clean.
 
 When running under the `db` profile:
 
-* H2 database is enabled
+* PostgreSQL is used
 * Spring Data JPA is active
-* Data initialization runs conditionally
+* Docker configuration is externalized using environment variables (`.env`).
 
 `application.yml` contains environment-specific configuration.
+
+---
+
+## 🐳 Docker Setup
+
+The project includes a `docker-compose.yml` file to start PostgreSQL:
+
+```bash
+docker compose up -d
+```
+
+This starts:
+
+* PostgreSQL 16
+
+* Persistent volume storage
+
+* Port 5432 exposed locally
 
 ---
 
@@ -58,16 +77,10 @@ When running under the `db` profile:
 This ensures:
 
 * Loose coupling
+
 * Easier testing
+
 * Future DB portability
-
----
-
-# 🔒 Security & Initialization
-
-* Legacy configuration classes removed
-* `DataInitializer` runs only when required profile is active
-* Application entry point simplified
 
 ---
 
@@ -85,6 +98,8 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 mvn spring-boot:run -Dspring-boot.run.profiles=db
 ```
 
+Make sure Docker PostgreSQL is running before starting the `db` profile.
+
 ---
 
 # 📈 Architectural Maturity
@@ -92,8 +107,14 @@ mvn spring-boot:run -Dspring-boot.run.profiles=db
 The backend now supports:
 
 * Clean separation of concerns
+
 * Multiple persistence strategies
+
+* Dockerized PostgreSQL
+
 * Profile-based environment configuration
+
 * JPA integration
 
-The module is prepared for migration to PostgreSQL or any production-grade relational database.
+The module is ready for production-grade relational databases.
+```

@@ -4,6 +4,7 @@
 target/
 build/
 out/
+dependency-reduced-pom.xml
 
 # ======================================
 # IDEs
@@ -28,14 +29,29 @@ Thumbs.db
 # ======================================
 *.log
 *.log.*
+logs/
 
 # ======================================
 # Environment / secrets
 # ======================================
 .env
 *.env
+!.env.example
+
 application-local.yml.orig
 application.yml.orig
+
+# ======================================
+# Spring Boot
+# ======================================
+*.pid
+*.seed
+
+# ======================================
+# Docker
+# ======================================
+docker-data/
+postgres_data/
 
 # ======================================
 # Temporary files
