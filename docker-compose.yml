@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
 
   postgres:
@@ -12,6 +10,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - webserver_net
 
   backend:
     build: ./BackEnd
@@ -24,17 +24,17 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/webserver_db
       SPRING_DATASOURCE_USERNAME: jrdevangel
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "8000:8080"
+    networks:
+      - webserver_net
 
   frontend:
     build: ./FrontEnd
     container_name: frontend-webserver
     restart: unless-stopped
-    ports:
-      - "3000:80"
     depends_on:
       - backend
+    networks:
+      - webserver_net
 
   caddy:
     image: caddy:latest
@@ -50,8 +50,14 @@ services:
     depends_on:
       - backend
       - frontend
+    networks:
+      - webserver_net
 
 volumes:
   postgres_data:
   caddy_data:
   caddy_config:
+
+networks:
+  webserver_net:
+    driver: bridge
