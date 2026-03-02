@@ -32,6 +32,18 @@ The persistence layer is abstracted through a domain-level `UserRepository` cont
 
 ---
 
+# 🖼 Architecture Diagram
+
+![WebServer Architecture](./a_flowchart_digital_illustration_of_a_docker_based.png)
+
+This diagram illustrates the Docker-based stack:
+
+* **PostgreSQL** – database container
+* **Spring Boot Backend** – profile-based repository
+* **Nginx Frontend** – static assets server
+* **Caddy** – reverse proxy managing HTTP/HTTPS traffic
+* All services are connected via a Docker network
+
 # 🔄 Profile-Based Repository Strategy
 
 Two persistence strategies are available:
