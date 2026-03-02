@@ -3,7 +3,6 @@
 ![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?logo=springboot&logoColor=white)
 ![Maven](https://img.shields.io/badge/Maven-Build-C71A36?logo=apachemaven&logoColor=white)
-![H2](https://img.shields.io/badge/Database-H2-0E83CD)
 ![Architecture](https://img.shields.io/badge/Architecture-Profile--Based-orange)
 ![Status](https://img.shields.io/badge/Status-Active-success)
 
@@ -16,18 +15,18 @@ Backend service built with Spring Boot following a clean repository abstraction 
 * Java 21
 * Spring Boot
 * Spring Data JPA
-* H2 (dev/db testing)
+* PostgreSQL (Docker)
+* H2 (optional local testing)
 * Maven
+* Docker
+* Caddy
 
 ---
 
 # 🏗 Architecture Overview
 
 The project follows a layered architecture:
-
-```
 Controller → Service → Repository (Interface) → Implementation
-```
 
 The persistence layer is abstracted through a domain-level `UserRepository` contract, allowing multiple implementations depending on the active Spring profile.
 
@@ -47,76 +46,84 @@ Two persistence strategies are available:
 ## `db` profile
 
 * Uses `JpaUserRepository`
-* Backed by H2 database
+* Backed by PostgreSQL (via Docker)
 * Enables full JPA persistence
-* Suitable for integration testing and future production DB integration
+* Suitable for production-like environments
 
 Profiles are activated via:
 
 ```bash
 -Dspring.profiles.active=dev
-```
 
 or
 
-```bash
 -Dspring.profiles.active=db
-```
 
----
 
-# 📦 Repository Implementations
+📦 Repository Implementations
 
-## `UserRepository`
+#UserRepository
 
 Domain-level abstraction that defines the persistence contract.
 
-## `InMemoryUserRepository`
+#InMemoryUserRepository
 
-* Activated with `@Profile("dev")`
+* Activated with @Profile("dev")
 * Stores users in memory
 * Provides lightweight authentication support
 
-## `JpaUserRepository`
+#JpaUserRepository
 
-* Activated with `@Profile("db")`
+* Activated with @Profile("db")
 * Extends Spring Data JPA
-* Persists users in H2 database
+* Persists users in PostgreSQL
 
----
+🧪 Running the Application
 
-# 🧪 Running the Application
-
-## Development Mode
-
-```bash
+Development Mode
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
-```
-
-## Database Mode
-
-```bash
+Database Mode
 mvn spring-boot:run -Dspring-boot.run.profiles=db
-```
 
----
+--- 
 
-# 📌 Current Status
+🐳 Docker & Caddy Setup
+
+1. Create a .env file in the root
+
+POSTGRES_PASSWORD=your_secure_password
+.env is ignored by Git. Use .env.example to share required environment variables without exposing secrets.
+
+2. Start the full stack
+
+docker compose up --build
+
+This will launch:
+
+* PostgreSQL database
+
+* Spring Boot backend
+* Nginx frontend
+* Caddy reverse proxy
+
+3. Stop and remove containers and volumes
+
+docker compose down -v
+
+📌 Current Status
 
 * Clean repository abstraction implemented
 * Profile-based persistence fully functional
-* Legacy configuration removed
-* Ready for PostgreSQL or other production database integration
+* Dockerized infrastructure with PostgreSQL, backend, frontend, and Caddy
+* Ready for production deployment
 
 ---
 
-# 🔜 Next Improvements
+🔜 Next Improvements
 
-* PostgreSQL integration
-* Docker containerization
 * CI/CD pipeline
+
 * Unit and integration test coverage
+* Production-ready configuration and monitoring
 
----
-
-This project demonstrates backend architecture evolution from basic configuration to structured, profile-driven persistence design.
+This project demonstrates backend architecture evolution from basic configuration to structured, profile-driven persistence design with a fully Dockerized stack.
