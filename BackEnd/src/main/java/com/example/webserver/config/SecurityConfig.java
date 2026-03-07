@@ -23,7 +23,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .headers(headers -> headers.frameOptions(frame -> frame.disable()))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/h2-console/**").permitAll()
-            .requestMatchers("/auth/**").permitAll()
+            .requestMatchers("/api/auth/**").permitAll()
             .requestMatchers("/api/health").permitAll()
             .anyRequest().authenticated()
         )
