@@ -45,4 +45,8 @@ public class UserEntity {
     public Role getRole() {
         return role;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
