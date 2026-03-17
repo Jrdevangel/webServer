@@ -60,17 +60,17 @@ public class AuthController {
                     request.getUsername(),
                     request.getPassword(),
                     Role.USER
-                );
+            );
                 
-                userService.saveUser(user);
+            userService.saveUser(user);
 
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
-                "error", "User registered"
+                "message", "User registered"
             ));
 
         } catch (Exception e) {
             
-            return ResponseEntity.ok().body(Map.of(
+            return ResposeEntity.ok().body(Map.of(
                 "error", "User already exists"
             ));
         }
