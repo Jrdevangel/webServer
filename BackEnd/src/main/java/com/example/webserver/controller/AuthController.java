@@ -6,6 +6,11 @@ import com.example.webserver.dto.LoginRequest;
 import com.example.webserver.dto.RegisterRequest;
 import com.example.webserver.service.UserService;
 
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -25,7 +30,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
         try {
             authenticationManager.authenticate(
@@ -35,10 +40,15 @@ public class AuthController {
                 )
             );
 
-            return "Correct login";
+            return ResponseEntity.ok().body(Map.of(
+                    "message", "Correct login"
+        ));
 
         } catch (AuthenticationException e) {
-            return "Incorrect credentials";
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                "error", "Incorrect credentials"
+            ));
         }
     }
 
