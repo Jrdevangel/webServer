@@ -64,13 +64,13 @@ public class AuthController {
                 
             userService.saveUser(user);
 
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "message", "User registered"
             ));
 
         } catch (Exception e) {
             
-            return ResposeEntity.ok().body(Map.of(
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
                 "error", "User already exists"
             ));
         }
