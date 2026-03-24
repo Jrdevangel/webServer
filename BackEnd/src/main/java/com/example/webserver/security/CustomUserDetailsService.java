@@ -1,4 +1,4 @@
-package com.example.webserver.service;
+package com.example.webserver.security;
 
 import com.example.webserver.domain.UserEntity;
 import com.example.webserver.repository.UserRepository;
