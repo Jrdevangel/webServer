@@ -2,4 +2,4 @@ spring:
   profiles:
     default: local
   jpa:
-    open-in-view: false
+    open-in-view:
