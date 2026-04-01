@@ -4,6 +4,7 @@ import com.example.webserver.domain.Role;
 import com.example.webserver.domain.UserEntity;
 import com.example.webserver.dto.LoginRequest;
 import com.example.webserver.dto.RegisterRequest;
+import com.example.webserver.security.JwtService;
 import com.example.webserver.service.UserService;
 
 import java.util.Map;
@@ -22,11 +23,14 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final JwtService jwtService;
 
     public AuthController(AuthenticationManager authenticationManager,
-                          UserService userService) {
+                          UserService userService,
+                          JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/login")
@@ -40,8 +44,10 @@ public class AuthController {
                 )
             );
 
+            String token = jwtService.generateToken(request.getUsername());
+
             return ResponseEntity.ok().body(Map.of(
-                    "message", "Correct login"
+                    "token", token
         ));
 
         } catch (AuthenticationException e) {
