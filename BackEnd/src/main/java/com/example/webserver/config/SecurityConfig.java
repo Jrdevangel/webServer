@@ -23,19 +23,24 @@ public class SecurityConfig {
     }
     
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/health").permitAll()
-                .anyRequest().authenticated()
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+            http
+                .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
+                .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/h2-console/**").permitAll()
+
+                    .requestMatchers("/api/auth/login").permitAll()
+                    .requestMatchers("/api/auth/register").permitAll()
+                    .requestMatchers("/api/auth/refresh").permitAll()
+                    .requestMatchers("/api/auth/logout").permitAll()
+
+                    .requestMatchers("/api/health").permitAll()
+
+                    .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
+         return http.build();
     }
     
     @Bean
