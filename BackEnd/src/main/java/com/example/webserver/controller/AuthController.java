@@ -3,19 +3,23 @@ package com.example.webserver.controller;
 import com.example.webserver.domain.Role;
 import com.example.webserver.domain.UserEntity;
 import com.example.webserver.dto.LoginRequest;
+import com.example.webserver.dto.RefreshTokenRequest;
 import com.example.webserver.dto.RegisterRequest;
+import com.example.webserver.entity.RefreshToken;
 import com.example.webserver.security.JwtService;
+import com.example.webserver.service.RefreshTokenService;
 import com.example.webserver.service.UserService;
 
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
+
+import com.example.webserver.dto.AuthResponse;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -23,13 +27,16 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
 
     public AuthController(AuthenticationManager authenticationManager,
                           UserService userService,
+                          RefreshTokenService refreshTokenService,
                           JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
+        this.refreshTokenService = refreshTokenService;
         this.jwtService = jwtService;
     }
 
@@ -44,11 +51,16 @@ public class AuthController {
                 )
             );
 
-            String token = jwtService.generateToken(request.getUsername());
-
-            return ResponseEntity.ok().body(Map.of(
-                    "token", token
-        ));
+            UserEntity user = userService.findByUsername(request.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+            
+            String accessToken = jwtService.generateToken(user.getUsername());
+            
+            return ResponseEntity.ok(
+                new AuthResponse(accessToken, refreshToken.getToken())
+);
 
         } catch (AuthenticationException e) {
 
@@ -79,6 +91,22 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
                 "error", "User already exists"
             ));
-        }
     }
+}
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
+
+    RefreshToken refreshToken = refreshTokenService.findByToken(request.getRefreshToken());
+
+    refreshTokenService.verifyExpiration(refreshToken);
+
+    UserEntity user = refreshToken.getUser();
+
+    String newAccessToken = jwtService.generateToken(user.getUsername());
+
+    return ResponseEntity.ok(
+            new AuthResponse(newAccessToken, refreshToken.getToken())
+    );
+}
 }
