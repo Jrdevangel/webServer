@@ -1,60 +1,109 @@
-```markdown
 # Backend Module
 
-Spring Boot backend module implementing user management with profile-driven persistence.
+Spring Boot backend module implementing user management with JWT-based authentication and secure session handling.
 
----
+## 🚀 Evolution
 
-# 🧩 Module Structure
+The backend has evolved from a simple persistence-based architecture to a secure authentication system including:
 
-```
+- Stateless JWT-based authentication
+- Persistent refresh token management
+- Secure refresh token rotation strategy
+
+## 🧩 Module Structure
+
 com.example.webserver
+
 ├── config
 ├── controller
+│ └── AuthController.java
+├── dto
+│ ├── LoginRequest.java
+│ ├── RegisterRequest.java
+│ ├── RefreshTokenRequest.java
+│ └── AuthResponse.java
+├── entity
+│ └── RefreshToken.java
 ├── repository
-│   ├── UserRepository.java
-│   ├── JpaUserRepository.java
-│   └── memory/InMemoryUserRepository.java
+│ ├── UserRepository.java
+│ ├── JpaUserRepository.java
+│ ├── RefreshTokenRepository.java
+│ └── memory/InMemoryUserRepository.java
+├── security
+│ ├── JwtService.java
+│ └── JwtAuthenticationFilter.java
 ├── service
+│ ├── UserService.java
+│ └── RefreshTokenService.java
 └── resources
-```
 
----
+## 🔐 Authentication & Security
 
-# 🎯 Design Principles
+### JWT-Based Authentication
 
-## 1. Repository Abstraction
+The system uses stateless authentication via JWT:
 
-`UserRepository` defines the persistence contract.
+- Access tokens (short-lived)
+- Refresh tokens (persistent, stored in DB)
 
-Business logic depends on the interface, not on a specific implementation.
+### Authentication Flow
 
-## 2. Profile-Based Injection
+Login → Access Token + Refresh Token
+↓
+Access Token expires
+↓
+POST /api/auth/refresh
+↓
+New Access Token + New Refresh Token (rotation)
 
-Spring's `@Profile` annotation determines which repository implementation is injected:
+### Refresh Token Strategy
 
-* `dev` → `InMemoryUserRepository`
-* `db`  → `JpaUserRepository`
+- Refresh tokens are stored in database
+- Each token has an expiration date
+- Tokens are **rotated on use**:
+  - Old token is deleted
+  - New token is issued
 
-This avoids conditional logic in services and keeps the architecture clean.
+This prevents replay attacks and improves session security.
 
----
+### 🔄 Endpoints
 
-# 🗄 Database Configuration
+### Auth Endpoints
+
+| Method | Endpoint              | Description |
+|--------|----------------------|-------------|
+| POST   | /api/auth/register   | Register new user |
+| POST   | /api/auth/login      | Authenticate user |
+| POST   | /api/auth/refresh    | Refresh access token |
+| POST   | /api/auth/logout     | Logout (token invalidation planned) |
+
+## 🧠 Security Layer
+
+### JwtAuthenticationFilter
+
+- Intercepts incoming requests
+- Extracts JWT from Authorization header
+- Validates token
+- Injects authenticated user into SecurityContext
+
+Public endpoints excluded from filtering:
+
+- /api/auth/login
+- /api/auth/register
+- /api/auth/refresh
+- /api/auth/logout
+
+## 🗄 Database Configuration
 
 When running under the `db` profile:
 
-* PostgreSQL is used
-* Spring Data JPA is active
-* Docker configuration is externalized using environment variables (`.env`).
+- PostgreSQL is used
+- Spring Data JPA is active
+- Docker configuration is externalized using environment variables (`.env`)
 
 `application.yml` contains environment-specific configuration.
 
----
-
 ## 🐳 Docker Setup
-
-The project includes a `docker-compose.yml` file to start PostgreSQL:
 
 ```bash
 docker compose up -d
@@ -62,59 +111,32 @@ docker compose up -d
 
 This starts:
 
-* PostgreSQL 16
+- PostgreSQL 16
+- Persistent volume storage
+- Port 5432 exposed locally
 
-* Persistent volume storage
+## 🧠 Service Layer
 
-* Port 5432 exposed locally
+### UserService
+- Handles user persistence
+- Encodes passwords using BCrypt
 
----
-
-# 🧠 Service Layer
-
-`UserService` contains business logic and interacts only with `UserRepository`.
-
-This ensures:
-
-* Loose coupling
-
-* Easier testing
-
-* Future DB portability
+### RefreshTokenService
+- Creates refresh tokens
+- Validates expiration
+- Deletes tokens
+- Implements refresh token rotation
 
 ---
 
-# 🧪 Execution
+## 📈 Architectural Maturity
 
-### Development
+The backend currently includes:
 
-```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
-```
-
-### With Database
-
-```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=db
-```
-
-Make sure Docker PostgreSQL is running before starting the `db` profile.
-
----
-
-# 📈 Architectural Maturity
-
-The backend now supports:
-
-* Clean separation of concerns
-
-* Multiple persistence strategies
-
-* Dockerized PostgreSQL
-
-* Profile-based environment configuration
-
-* JPA integration
-
-The module is ready for production-grade relational databases.
-```
+- Clean architecture (Controller → Service → Repository)
+- Profile-based persistence strategy
+- JWT authentication
+- Stateful refresh token management
+- Refresh token rotation
+- Secure password handling (BCrypt)
+- Dockerized PostgreSQL
