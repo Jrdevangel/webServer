@@ -48,4 +48,11 @@ public class RefreshTokenService {
     public void deleteByUser(UserEntity user) {
         refreshTokenRepository.deleteByUser(user);
     }
+
+    public RefreshToken rotateRefreshToken(RefreshToken oldToken) {
+
+        refreshTokenRepository.delete(oldToken);
+
+        return createRefreshToken(oldToken.getUser());
+    }
 }

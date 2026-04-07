@@ -57,10 +57,10 @@ public class AuthController {
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
             
             String accessToken = jwtService.generateToken(user.getUsername());
-            
+
             return ResponseEntity.ok(
                 new AuthResponse(accessToken, refreshToken.getToken())
-);
+            );
 
         } catch (AuthenticationException e) {
 
@@ -97,16 +97,18 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
 
-    RefreshToken refreshToken = refreshTokenService.findByToken(request.getRefreshToken());
+    RefreshToken oldToken = refreshTokenService.findByToken(request.getRefreshToken());
 
-    refreshTokenService.verifyExpiration(refreshToken);
+    refreshTokenService.verifyExpiration(oldToken);
 
-    UserEntity user = refreshToken.getUser();
+    RefreshToken newToken = refreshTokenService.rotateRefreshToken(oldToken);
 
-    String newAccessToken = jwtService.generateToken(user.getUsername());
+    UserEntity user = newToken.getUser();
+
+    String accessToken = jwtService.generateToken(user.getUsername());
 
     return ResponseEntity.ok(
-            new AuthResponse(newAccessToken, refreshToken.getToken())
+        new AuthResponse(accessToken, newToken.getToken())
     );
 }
 }
