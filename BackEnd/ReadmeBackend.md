@@ -56,6 +56,25 @@ POST /api/auth/refresh
 ↓
 New Access Token + New Refresh Token (rotation)
 
+---
+
+### Token Lifecycle
+
+```text
+Client
+  │
+  ├── POST /api/auth/login
+  │        ↓
+  │   Access Token + Refresh Token
+  │
+  ├── Access Token expires
+  │
+  └── POST /api/auth/refresh (with Refresh Token)
+           ↓
+     New Access Token + New Refresh Token (rotation)
+```
+---
+
 ### Refresh Token Strategy
 
 - Refresh tokens are stored in database
@@ -66,9 +85,7 @@ New Access Token + New Refresh Token (rotation)
 
 This prevents replay attacks and improves session security.
 
-### 🔄 Endpoints
-
-### Auth Endpoints
+### 🔄 Auth Endpoints
 
 | Method | Endpoint              | Description |
 |--------|----------------------|-------------|
