@@ -1,6 +1,8 @@
 package com.example.webserver.service;
 
 import com.example.webserver.entity.RefreshToken;
+import com.example.webserver.exception.TokenExpiredException;
+import com.example.webserver.exception.TokenReuseException;
 import com.example.webserver.domain.UserEntity;
 import com.example.webserver.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
@@ -30,19 +32,9 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
-    public RefreshToken verifyExpiration(RefreshToken token) {
-
-        if (token.getExpiryDate().isBefore(Instant.now())) {
-            refreshTokenRepository.delete(token);
-            throw new RuntimeException("Refresh token expired");
-        }
-
-        return token;
-    }
-
     public RefreshToken findByToken(String token) {
         return refreshTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Refresh token not found"));
+                .orElseThrow(() -> new TokenReuseException("Refresh token reuse detected"));
     }
 
     public void deleteByUser(UserEntity user) {
@@ -55,4 +47,14 @@ public class RefreshTokenService {
 
         return createRefreshToken(oldToken.getUser());
     }
+
+    public RefreshToken verifyExpiration(RefreshToken token) {
+
+    if (token.getExpiryDate().isBefore(Instant.now())) {
+        refreshTokenRepository.delete(token);
+        throw new TokenExpiredException("Refresh token expired");
+    }
+
+    return token;
+}
 }

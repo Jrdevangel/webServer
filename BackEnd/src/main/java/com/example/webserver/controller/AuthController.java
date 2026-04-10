@@ -6,6 +6,7 @@ import com.example.webserver.dto.LoginRequest;
 import com.example.webserver.dto.RefreshTokenRequest;
 import com.example.webserver.dto.RegisterRequest;
 import com.example.webserver.entity.RefreshToken;
+import com.example.webserver.exception.TokenReuseException;
 import com.example.webserver.security.JwtService;
 import com.example.webserver.service.RefreshTokenService;
 import com.example.webserver.service.UserService;
@@ -97,18 +98,39 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
 
-    RefreshToken oldToken = refreshTokenService.findByToken(request.getRefreshToken());
+        try {
+            RefreshToken oldToken = refreshTokenService.findByToken(request.getRefreshToken());
 
-    refreshTokenService.verifyExpiration(oldToken);
+            refreshTokenService.verifyExpiration(oldToken);
 
-    RefreshToken newToken = refreshTokenService.rotateRefreshToken(oldToken);
+            RefreshToken newToken = refreshTokenService.rotateRefreshToken(oldToken);
 
-    UserEntity user = newToken.getUser();
+            UserEntity user = newToken.getUser();
 
-    String accessToken = jwtService.generateToken(user.getUsername());
+            String accessToken = jwtService.generateToken(user.getUsername());
 
-    return ResponseEntity.ok(
-        new AuthResponse(accessToken, newToken.getToken())
-    );
+            return ResponseEntity.ok(
+                new AuthResponse(accessToken, newToken.getToken())
+            );
+        
+        } catch (TokenReuseException e) {
+            
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+            "error", "Refresh token reuse detected. Session invalidated."
+        ));
+    }
 }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestParam String username) {
+
+        UserEntity user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        refreshTokenService.deleteByUser(user);
+
+        return ResponseEntity.ok(Map.of(
+            "message", "Logged out successfully"
+        ));
+    }
 }
