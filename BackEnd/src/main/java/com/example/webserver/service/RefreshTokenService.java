@@ -1,9 +1,9 @@
 package com.example.webserver.service;
 
 import com.example.webserver.entity.RefreshToken;
+import com.example.webserver.entity.UserEntity;
 import com.example.webserver.exception.TokenExpiredException;
 import com.example.webserver.exception.TokenReuseException;
-import com.example.webserver.domain.UserEntity;
 import com.example.webserver.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,9 @@
 package com.example.webserver.repository;
 
 import com.example.webserver.entity.RefreshToken;
-import com.example.webserver.domain.UserEntity;
+
+import com.example.webserver.entity.UserEntity;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

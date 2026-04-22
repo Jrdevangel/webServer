@@ -1,11 +1,11 @@
 package com.example.webserver.service;
 
-import java.util.Optional;
-
+import com.example.webserver.entity.UserEntity;
+import com.example.webserver.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.example.webserver.domain.UserEntity;
-import com.example.webserver.repository.UserRepository;
+
+import java.util.Optional;
 
 @Service
 public class UserService {

@@ -1,6 +1,6 @@
 package com.example.webserver.repository;
 
-import com.example.webserver.domain.UserEntity;
+import com.example.webserver.entity.UserEntity;
 
 import java.util.Optional;
 

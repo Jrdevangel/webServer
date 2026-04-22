@@ -3,8 +3,6 @@ package com.example.webserver.entity;
 import jakarta.persistence.*;
 import java.time.Instant;
 
-import com.example.webserver.domain.UserEntity;
-
 @Entity
 @Table(name = "refresh_tokens")
 public class RefreshToken {

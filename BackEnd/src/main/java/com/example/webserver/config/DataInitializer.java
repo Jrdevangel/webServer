@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.example.webserver.domain.Role;
-import com.example.webserver.domain.UserEntity;
+import com.example.webserver.entity.Role;
 import com.example.webserver.repository.UserRepository;
+import com.example.webserver.entity.UserEntity;
 
 @Configuration
 @Profile("local")

@@ -1,7 +1,6 @@
 package com.example.webserver.controller;
 
-import com.example.webserver.domain.Role;
-import com.example.webserver.domain.UserEntity;
+import com.example.webserver.entity.Role;
 import com.example.webserver.dto.LoginRequest;
 import com.example.webserver.dto.RefreshTokenRequest;
 import com.example.webserver.dto.RegisterRequest;
@@ -21,6 +20,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.webserver.dto.AuthResponse;
+import com.example.webserver.entity.UserEntity;
 
 @RestController
 @RequestMapping("/api/auth")
