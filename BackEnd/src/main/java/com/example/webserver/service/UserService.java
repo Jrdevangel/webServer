@@ -28,14 +28,4 @@ public class UserService {
     public Optional<UserEntity> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
-
-    public UserEntity findByUsernameOrThrow(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    public UserEntity findBUserEntity(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
 }
