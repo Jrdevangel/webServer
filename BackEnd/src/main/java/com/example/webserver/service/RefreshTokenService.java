@@ -33,28 +33,30 @@ public class RefreshTokenService {
     }
 
     public RefreshToken findByToken(String token) {
-        return refreshTokenRepository.findByToken(token)
-                .orElseThrow(() -> new TokenReuseException("Refresh token reuse detected"));
+        
+        if (token == null || token.isBlank()) {
+            
+            throw new IllegalArgumentException("Refresh token is required");
     }
+    
+        return refreshTokenRepository.findByToken(token)
+            .orElseThrow(() -> new TokenReuseException("Refresh token reuse detected"));
+}
 
     public void deleteByUser(UserEntity user) {
         refreshTokenRepository.deleteByUser(user);
     }
 
     public RefreshToken rotateRefreshToken(RefreshToken oldToken) {
-
         refreshTokenRepository.delete(oldToken);
-
         return createRefreshToken(oldToken.getUser());
     }
 
-    public RefreshToken verifyExpiration(RefreshToken token) {
+    public void verifyExpiration(RefreshToken token) {
 
     if (token.getExpiryDate().isBefore(Instant.now())) {
         refreshTokenRepository.delete(token);
         throw new TokenExpiredException("Refresh token expired");
     }
-
-    return token;
 }
 }
