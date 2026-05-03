@@ -9,6 +9,8 @@ The backend has evolved from a simple persistence-based architecture to a secure
 - Stateless JWT-based authentication
 - Persistent refresh token management
 - Secure refresh token rotation strategy
+- Centralized exception handling
+- Service-layer authentication (AuthService)
 
 ## 🧩 Module Structure
 
@@ -16,26 +18,34 @@ com.example.webserver
 
 ├── config
 ├── controller
-│ └── AuthController.java
+│   └── AuthController.java
 ├── dto
-│ ├── LoginRequest.java
-│ ├── RegisterRequest.java
-│ ├── RefreshTokenRequest.java
-│ └── AuthResponse.java
+│   ├── LoginRequest.java
+│   ├── RegisterRequest.java
+│   ├── RefreshTokenRequest.java
+│   └── AuthResponse.java
 ├── entity
-│ └── RefreshToken.java
+│   ├── UserEntity.java
+│   └── RefreshToken.java
+├── exception
+│   ├── GlobalExceptionHandler.java
+│   ├── TokenExpiredException.java
+│   └── TokenReuseException.java
 ├── repository
-│ ├── UserRepository.java
-│ ├── JpaUserRepository.java
-│ ├── RefreshTokenRepository.java
-│ └── memory/InMemoryUserRepository.java
+│   ├── UserRepository.java
+│   ├── JpaUserRepository.java
+│   ├── RefreshTokenRepository.java
+│   └── memory/InMemoryUserRepository.java
 ├── security
-│ ├── JwtService.java
-│ └── JwtAuthenticationFilter.java
+│   ├── JwtService.java
+│   └── JwtAuthenticationFilter.java
 ├── service
-│ ├── UserService.java
-│ └── RefreshTokenService.java
+│   ├── AuthService.java
+│   ├── UserService.java
+│   └── RefreshTokenService.java
 └── resources
+
+---
 
 ## 🔐 Authentication & Security
 
@@ -82,6 +92,7 @@ Client
 - Tokens are **rotated on use**:
   - Old token is deleted
   - New token is issued
+- Invalid or replayed tokens trigger exceptions
 
 This prevents replay attacks and improves session security.
 
@@ -92,57 +103,49 @@ This prevents replay attacks and improves session security.
 | POST   | /api/auth/register   | Register new user |
 | POST   | /api/auth/login      | Authenticate user |
 | POST   | /api/auth/refresh    | Refresh access token |
-| POST   | /api/auth/logout     | Logout (token invalidation planned) |
+
+---
 
 ## 🧠 Security Layer
 
-### JwtAuthenticationFilter
+### JwtAuthenticationFilter (to be integrated next)
 
-- Intercepts incoming requests
-- Extracts JWT from Authorization header
-- Validates token
-- Injects authenticated user into SecurityContext
+* Intercepts incoming requests
+* Extracts JWT from Authorization header:
 
-Public endpoints excluded from filtering:
+```http
+Authorization: Bearer <access_token>
+```
+* Validates token
+* Injects authenticated user into SecurityContext
 
-- /api/auth/login
-- /api/auth/register
-- /api/auth/refresh
-- /api/auth/logout
+Public endpoints excluded:
+* /api/auth/login
+* /api/auth/register
+* /api/auth/refresh
+
+---
 
 ## 🗄 Database Configuration
 
-When running under the `db` profile:
+When running under the dev profile:
+* PostgreSQL is used
+* Spring Data JPA is active
+* Tables are generated automatically
 
-- PostgreSQL is used
-- Spring Data JPA is active
-- Docker configuration is externalized using environment variables (`.env`)
+Configuration is managed via `application-dev.yml` and environment variables.
 
-`application.yml` contains environment-specific configuration.
+--- 
 
 ## 🐳 Docker Setup
-
-```bash
-docker compose up -d
 ```
+docker compose up -d
+````
 
-This starts:
-
-- PostgreSQL 16
-- Persistent volume storage
-- Port 5432 exposed locally
-
-## 🧠 Service Layer
-
-### UserService
-- Handles user persistence
-- Encodes passwords using BCrypt
-
-### RefreshTokenService
-- Creates refresh tokens
-- Validates expiration
-- Deletes tokens
-- Implements refresh token rotation
+Starts:
+* PostgreSQL
+* Persistent volume
+* Port 5432 exposed locally
 
 ---
 
@@ -150,10 +153,12 @@ This starts:
 
 The backend currently includes:
 
-- Clean architecture (Controller → Service → Repository)
-- Profile-based persistence strategy
-- JWT authentication
-- Stateful refresh token management
-- Refresh token rotation
-- Secure password handling (BCrypt)
-- Dockerized PostgreSQL
+* Clean architecture (Controller → Service → Repository)
+* Separation of concerns (AuthService introduced)
+* JWT authentication
+* Stateful refresh token management
+* Refresh token rotation
+* Centralized exception handling
+* Secure password handling (BCrypt)
+* Dockerized PostgreSQL
+* Postman integration for automated testing
