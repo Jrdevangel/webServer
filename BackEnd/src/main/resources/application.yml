@@ -1,3 +1,14 @@
 spring:
-  profiles:
-    active: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/webserver_db
+    username: jrdevangel
+    password: ${POSTGRES_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000

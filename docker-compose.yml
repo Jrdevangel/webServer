@@ -19,13 +19,17 @@ services:
     restart: unless-stopped
     depends_on:
       - postgres
+
     ports:
       - "8080:8080"
+
     environment:
       SPRING_PROFILES_ACTIVE: db
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/webserver_db
       SPRING_DATASOURCE_USERNAME: jrdevangel
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+
     networks:
       - webserver_net
 

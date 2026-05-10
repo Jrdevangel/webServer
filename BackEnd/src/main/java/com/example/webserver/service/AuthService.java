@@ -59,6 +59,7 @@ public class AuthService {
 
         UserEntity user = new UserEntity(
                 request.getUsername(),
+                request.getEmail(),
                 request.getPassword(),
                 Role.USER
         );
