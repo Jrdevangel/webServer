@@ -4,6 +4,7 @@ import com.example.webserver.entity.Role;
 import com.example.webserver.entity.UserEntity;
 import com.example.webserver.dto.AuthResponse;
 import com.example.webserver.dto.LoginRequest;
+import com.example.webserver.dto.LogoutRequest;
 import com.example.webserver.dto.RefreshTokenRequest;
 import com.example.webserver.dto.RegisterRequest;
 import com.example.webserver.entity.RefreshToken;
@@ -86,5 +87,13 @@ public class AuthService {
         String accessToken = jwtService.generateToken(user.getUsername());
 
         return new AuthResponse(accessToken, newToken.getToken());
+    }
+
+    @Transactional
+    public void logout(LogoutRequest request) {
+
+        refreshTokenService.revokeToken(
+            request.getRefreshToken()
+        );
     }
 }

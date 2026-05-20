@@ -21,31 +21,72 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+
         try {
-            return ResponseEntity.ok(authService.login(request));
+            return ResponseEntity.ok(
+                    authService.login(request)
+            );
+
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Incorrect credentials"));
+
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of(
+                        "error", 
+                        "Incorrect credentials"
+                    ));
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", e.getMessage()));
+            
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                        "error", 
+                        e.getMessage()
+                    ));
         }
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(
             @Valid @RequestBody RegisterRequest request) {
+        
         try {
-            return ResponseEntity.status(HttpStatus.CREATED)
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
                     .body(authService.register(request));
+        
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", e.getMessage()));
+        
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(Map.of(
+                        "error", 
+                        e.getMessage()
+                    ));
         }
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
-            return ResponseEntity.ok(authService.refreshToken(request));
+    public ResponseEntity<?> refreshToken(
+        @RequestBody RefreshTokenRequest request) {
+        
+       return ResponseEntity.ok(
+                authService.refreshToken(request)
+        );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(
+        @RequestBody LogoutRequest request) {
+        
+        authService.logout(request);
+        
+        return ResponseEntity.ok(
+                Map.of(
+                    "message", 
+                    "Logged out successfully"
+                )
+            );
     }
 }
