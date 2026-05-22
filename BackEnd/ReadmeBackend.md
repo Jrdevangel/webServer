@@ -11,6 +11,9 @@ The backend has evolved from a simple persistence-based architecture to a secure
 - Secure refresh token rotation strategy
 - Centralized exception handling
 - Service-layer authentication (AuthService)
+- DTO validation using Jakarta Validation
+- Logout endpoint with refresh token revocation
+- Token replay/reuse protection
 
 ## 🧩 Module Structure
 
@@ -23,6 +26,7 @@ com.example.webserver
 │   ├── LoginRequest.java
 │   ├── RegisterRequest.java
 │   ├── RefreshTokenRequest.java
+│   ├── LogoutRequest.java
 │   └── AuthResponse.java
 ├── entity
 │   ├── UserEntity.java
@@ -58,13 +62,23 @@ The system uses stateless authentication via JWT:
 
 ### Authentication Flow
 
-Login → Access Token + Refresh Token
-↓
-Access Token expires
-↓
-POST /api/auth/refresh
-↓
-New Access Token + New Refresh Token (rotation)
+```text
+Register / Login
+        ↓
+Access Token + Refresh Token
+        │
+        ├── Access Token expires
+        │          ↓
+        │   POST /api/auth/refresh
+        │          ↓
+        │   New Access Token + New Refresh Token
+        │
+        └── POST /api/auth/logout
+                   ↓
+            Refresh Token revoked
+                   ↓
+              Future refresh blocked (403)
+```
 
 ---
 
@@ -79,10 +93,17 @@ Client
   │
   ├── Access Token expires
   │
-  └── POST /api/auth/refresh (with Refresh Token)
+  ├── POST /api/auth/refresh
+  │        ↓
+  │   New Access Token + New Refresh Token
+  │
+  └── POST /api/auth/logout
            ↓
-     New Access Token + New Refresh Token (rotation)
+      Refresh Token revoked
+           ↓
+      Reused or revoked refresh token rejected (403 Forbidden)
 ```
+
 ---
 
 ### Refresh Token Strategy
@@ -92,7 +113,8 @@ Client
 - Tokens are **rotated on use**:
   - Old token is deleted
   - New token is issued
-- Invalid or replayed tokens trigger exceptions
+- Tokens can be revoked on logout
+- Expired, reused, or revoked tokens trigger security exceptions
 
 This prevents replay attacks and improves session security.
 
@@ -103,12 +125,13 @@ This prevents replay attacks and improves session security.
 | POST   | /api/auth/register   | Register new user |
 | POST   | /api/auth/login      | Authenticate user |
 | POST   | /api/auth/refresh    | Refresh access token |
+| POST   | /api/auth/logout     | Revoke refresh token |
 
 ---
 
 ## 🧠 Security Layer
 
-### JwtAuthenticationFilter (to be integrated next)
+### JwtAuthenticationFilter (Request Authentication Layer)
 
 * Intercepts incoming requests
 * Extracts JWT from Authorization header:
@@ -119,10 +142,11 @@ Authorization: Bearer <access_token>
 * Validates token
 * Injects authenticated user into SecurityContext
 
-Public endpoints excluded:
+Public endpoints:
 * /api/auth/login
 * /api/auth/register
 * /api/auth/refresh
+* /api/auth/logout
 
 ---
 
@@ -138,9 +162,10 @@ Configuration is managed via `application-dev.yml` and environment variables.
 --- 
 
 ## 🐳 Docker Setup
-```
+
+```bash
 docker compose up -d
-````
+```
 
 Starts:
 * PostgreSQL
@@ -150,15 +175,15 @@ Starts:
 ---
 
 ## 📈 Architectural Maturity
-
-The backend currently includes:
-
 * Clean architecture (Controller → Service → Repository)
 * Separation of concerns (AuthService introduced)
 * JWT authentication
+* Secure password handling (BCrypt)
 * Stateful refresh token management
 * Refresh token rotation
+* Logout + token revocation
+* Token replay/reuse protection
+* DTO validation (Jakarta Validation)
 * Centralized exception handling
-* Secure password handling (BCrypt)
 * Dockerized PostgreSQL
 * Postman integration for automated testing
