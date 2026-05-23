@@ -2,9 +2,9 @@
 
 Spring Boot backend module implementing user management with JWT-based authentication and secure session handling.
 
-## 🚀 Evolution
+## 🚀 Current Features
 
-The backend has evolved from a simple persistence-based architecture to a secure authentication system including:
+The backend currently includes:
 
 - Stateless JWT-based authentication
 - Persistent refresh token management
@@ -14,6 +14,8 @@ The backend has evolved from a simple persistence-based architecture to a secure
 - DTO validation using Jakarta Validation
 - Logout endpoint with refresh token revocation
 - Token replay/reuse protection
+- Refresh token persistence with PostgreSQL
+- Manual API verification using Postman
 
 ## 🧩 Module Structure
 
@@ -152,25 +154,70 @@ Public endpoints:
 
 ## 🗄 Database Configuration
 
-When running under the dev profile:
-* PostgreSQL is used
-* Spring Data JPA is active
-* Tables are generated automatically
+The backend uses PostgreSQL with Spring Data JPA.
 
-Configuration is managed via `application-dev.yml` and environment variables.
+Current setup:
+
+* PostgreSQL database
+* Hibernate automatic schema updates (`ddl-auto=update`)
+* Automatic table creation and synchronization
+* Environment variable support for credentials
+
+Configuration is managed through:
+
+`application.yml`
 
 --- 
 
 ## 🐳 Docker Setup
 
+Start the infrastructure:
+
 ```bash
 docker compose up -d
 ```
 
-Starts:
-* PostgreSQL
-* Persistent volume
-* Port 5432 exposed locally
+Services:
+
+* PostgreSQL database
+* Spring Boot backend
+* Frontend application
+* Caddy reverse proxy
+
+---
+
+## ⚠️ Local Development Warning
+
+Do not run the Dockerized backend and the local Spring Boot instance simultaneously.
+
+The backend container and:
+
+```bash
+mvn spring-boot:run
+```
+
+both use port `8080`.
+
+If both are running, Spring Boot will fail with:
+
+```text
+Port 8080 was already in use
+```
+
+---
+
+## ✅ API Verification
+
+The authentication flow has been manually verified using Postman.
+
+Validated endpoints:
+
+* Register (`/api/auth/register`)
+* Login (`/api/auth/login`)
+* Refresh token persistence and validation in PostgreSQL
+* Refresh token generation and rotation
+* Logout token revocation
+* JWT issuance and validation
 
 ---
 
@@ -185,5 +232,5 @@ Starts:
 * Token replay/reuse protection
 * DTO validation (Jakarta Validation)
 * Centralized exception handling
-* Dockerized PostgreSQL
+* Dockerized infrastructure
 * Postman integration for automated testing
