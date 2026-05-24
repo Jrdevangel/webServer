@@ -12,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.webserver.dto.AuthResponse;
+import com.example.webserver.dto.LoginRequest;
+
 @SpringBootTest
 class AuthServiceTest {
 
@@ -47,5 +50,55 @@ class AuthServiceTest {
         assertNotNull(savedUser);
         assertEquals("angel", savedUser.getUsername());
         assertEquals("angel@test.com", savedUser.getEmail());
+    }
+
+    @Test
+    void shouldLoginSuccessfully() {
+
+        RegisterRequest registerRequest = 
+                new RegisterRequest();
+        
+        registerRequest.setUsername("angel");
+        registerRequest.setEmail("angel@test.com");
+        registerRequest.setPassword("Angel123!");
+
+        authService.register(registerRequest);
+
+        LoginRequest loginRequest = 
+                new LoginRequest();
+
+        loginRequest.setUsername("angel");
+        loginRequest.setPassword("Angel123!");
+
+        AuthResponse authResponse = 
+                authService.login(loginRequest);
+        
+        assertNotNull(authResponse);
+        assertNotNull(authResponse.getAccessToken());
+        assertNotNull(authResponse.getRefreshToken());
+    }
+
+    @Test
+    void shouldFailLoginWithWrongPassword() {
+
+        RegisterRequest registerRequest = 
+                new RegisterRequest();
+
+        registerRequest.setUsername("angel");
+        registerRequest.setEmail("angel@test.com");
+        registerRequest.setPassword("Angel123!");
+
+        authService.register(registerRequest);
+
+        LoginRequest loginRequest = 
+                new LoginRequest();
+
+        loginRequest.setUsername("angel");
+        loginRequest.setPassword("WrongPassword123!");
+
+        assertThrows(
+                RuntimeException.class, 
+                () -> authService.login(loginRequest)
+        );
     }
 }
