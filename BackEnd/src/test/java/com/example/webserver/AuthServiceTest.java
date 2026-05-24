@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.webserver.dto.AuthResponse;
 import com.example.webserver.dto.LoginRequest;
+import com.example.webserver.dto.LogoutRequest;
 import com.example.webserver.dto.RefreshTokenRequest;
 
 import org.springframework.security.authentication.BadCredentialsException;
@@ -237,4 +238,53 @@ class AuthServiceTest {
                     .getUsername()
                 );
         }
+    
+    @Test
+    void shouldRevokeRefreshTokenOnLogout() {
+        
+        RegisterRequest registerRequest =
+                new RegisterRequest();
+
+        registerRequest.setUsername("angel");
+        registerRequest.setEmail("angel@test.com");
+        registerRequest.setPassword("Angel123!");
+
+        authService.register(registerRequest);
+
+        LoginRequest loginRequest =
+                new LoginRequest();
+
+        loginRequest.setUsername("angel");
+        loginRequest.setPassword("Angel123!");
+
+        AuthResponse loginResponse =
+                authService.login(loginRequest);
+
+        String refreshToken =
+                loginResponse.getRefreshToken();
+
+        assertNotNull(refreshToken);
+
+        assertTrue(
+                refreshTokenRepository
+                        .findByToken(refreshToken)
+                        .isPresent()
+        );
+
+        LogoutRequest logoutRequest =
+                new LogoutRequest();
+
+        logoutRequest.setRefreshToken(
+                refreshToken
+        );
+
+        authService.logout(logoutRequest);
+
+        boolean tokenStillExists =
+                refreshTokenRepository
+                        .findByToken(refreshToken)
+                        .isPresent();
+
+        assertFalse(tokenStillExists);
+    }
 }
