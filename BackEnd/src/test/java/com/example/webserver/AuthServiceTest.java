@@ -117,4 +117,46 @@ class AuthServiceTest {
                 () -> authService.login(loginRequest)
         );
     }
+
+    @Test
+    void shouldGenerateAndPersistRefreshTokenOnLogin() {
+    
+        RegisterRequest registerRequest =
+                new RegisterRequest();
+    
+        registerRequest.setUsername("angel");
+        registerRequest.setEmail("angel@test.com");
+        registerRequest.setPassword("Angel123!");
+    
+        authService.register(registerRequest);
+    
+        LoginRequest loginRequest =
+                new LoginRequest();
+    
+        loginRequest.setUsername("angel");
+        loginRequest.setPassword("Angel123!");
+    
+        AuthResponse authResponse =
+                authService.login(loginRequest);
+    
+        assertNotNull(authResponse);
+        assertNotNull(authResponse.getRefreshToken());
+    
+        String refreshToken =
+                authResponse.getRefreshToken();
+    
+        var savedRefreshToken =
+                refreshTokenRepository
+                        .findByToken(refreshToken)
+                        .orElse(null);
+    
+        assertNotNull(savedRefreshToken);
+    
+        assertEquals(
+                "angel",
+                savedRefreshToken
+                        .getUser()
+                        .getUsername()
+        );
+    } 
 }
