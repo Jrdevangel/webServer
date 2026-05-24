@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.webserver.dto.AuthResponse;
 import com.example.webserver.dto.LoginRequest;
+import com.example.webserver.dto.RefreshTokenRequest;
+
 import org.springframework.security.authentication.BadCredentialsException;
 
 @SpringBootTest
@@ -158,5 +160,81 @@ class AuthServiceTest {
                         .getUser()
                         .getUsername()
         );
-    } 
+    }
+    
+    @Test
+void shouldRotateRefreshTokenSuccessfully() {
+
+    RegisterRequest registerRequest =
+            new RegisterRequest();
+
+    registerRequest.setUsername("angel");
+    registerRequest.setEmail("angel@test.com");
+    registerRequest.setPassword("Angel123!");
+
+    authService.register(registerRequest);
+
+    LoginRequest loginRequest =
+            new LoginRequest();
+
+    loginRequest.setUsername("angel");
+    loginRequest.setPassword("Angel123!");
+
+    AuthResponse loginResponse =
+            authService.login(loginRequest);
+
+    String oldRefreshToken =
+            loginResponse.getRefreshToken();
+
+    assertNotNull(oldRefreshToken);
+
+    RefreshTokenRequest refreshRequest =
+            new RefreshTokenRequest();
+
+    refreshRequest.setRefreshToken(
+            oldRefreshToken
+    );
+
+    AuthResponse refreshResponse =
+            authService.refreshToken(
+                    refreshRequest
+            );
+
+    assertNotNull(refreshResponse);
+    assertNotNull(
+            refreshResponse.getAccessToken()
+    );
+    assertNotNull(
+            refreshResponse.getRefreshToken()
+    );
+
+    String newRefreshToken =
+            refreshResponse.getRefreshToken();
+
+    assertNotEquals(
+            oldRefreshToken,
+            newRefreshToken
+    );
+
+    boolean oldTokenExists =
+            refreshTokenRepository
+                    .findByToken(oldRefreshToken)
+                    .isPresent();
+
+    assertFalse(oldTokenExists);
+
+    var savedNewToken =
+            refreshTokenRepository
+                    .findByToken(newRefreshToken)
+                    .orElse(null);
+
+    assertNotNull(savedNewToken);
+
+    assertEquals(
+            "angel",
+            savedNewToken
+                    .getUser()
+                    .getUsername()
+                );
+        }
 }
