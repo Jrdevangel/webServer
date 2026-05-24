@@ -287,4 +287,22 @@ class AuthServiceTest {
 
         assertFalse(tokenStillExists);
     }
+
+    @Test
+    void shouldFailRefreshWithNonExistingToken() {
+
+        RefreshTokenRequest request =
+                new RefreshTokenRequest();
+
+        request.setRefreshToken(
+                "non-existing-token"
+        );
+
+        assertThrows(
+                RuntimeException.class,
+                () -> authService.refreshToken(
+                        request
+                )
+        );
+    }
 }
