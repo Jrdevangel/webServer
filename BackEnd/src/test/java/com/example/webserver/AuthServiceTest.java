@@ -162,8 +162,8 @@ class AuthServiceTest {
         );
     }
     
-    @Test
-void shouldRotateRefreshTokenSuccessfully() {
+    @Test 
+    void shouldRotateRefreshTokenSuccessfully() {
 
     RegisterRequest registerRequest =
             new RegisterRequest();
