@@ -102,4 +102,19 @@ class AuthServiceTest {
                 () -> authService.login(loginRequest)
         );
     }
+
+    @Test
+    void shouldFailLoginWithNonExistingUser() {
+
+        LoginRequest loginRequest = 
+                new LoginRequest();
+
+        loginRequest.setUsername("nonexistinguser");
+        loginRequest.setPassword("SomePassword123!");
+
+        assertThrows(
+            BadCredentialsException.class,
+                () -> authService.login(loginRequest)
+        );
+    }
 }
