@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.webserver.dto.AuthResponse;
 import com.example.webserver.dto.LoginRequest;
+import org.springframework.security.authentication.BadCredentialsException;
 
 @SpringBootTest
 class AuthServiceTest {
@@ -97,7 +98,7 @@ class AuthServiceTest {
         loginRequest.setPassword("WrongPassword123!");
 
         assertThrows(
-                RuntimeException.class, 
+            BadCredentialsException.class,
                 () -> authService.login(loginRequest)
         );
     }
