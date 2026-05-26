@@ -1,7 +1,9 @@
 package com.example.webserver;
 
 import com.example.webserver.dto.RegisterRequest;
+import com.example.webserver.entity.RefreshToken;
 import com.example.webserver.entity.UserEntity;
+import com.example.webserver.exception.TokenExpiredException;
 import com.example.webserver.repository.RefreshTokenRepository;
 import com.example.webserver.repository.UserRepository;
 import com.example.webserver.service.AuthService;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.Instant;
 
 import com.example.webserver.dto.AuthResponse;
 import com.example.webserver.dto.LoginRequest;
@@ -305,4 +309,61 @@ class AuthServiceTest {
                 )
         );
     }
+
+    @Test
+    void shouldFailRefreshWithExpiredToken() {
+        
+        RegisterRequest registerRequest =
+            new RegisterRequest();
+            
+        registerRequest.setUsername("angel");
+        registerRequest.setEmail("angel@test.com");
+        registerRequest.setPassword("Angel123!");
+        
+        authService.register(registerRequest);
+
+    LoginRequest loginRequest =
+            new LoginRequest();
+
+    loginRequest.setUsername("angel");
+    loginRequest.setPassword("Angel123!");
+
+    AuthResponse loginResponse =
+            authService.login(loginRequest);
+
+    String refreshToken =
+            loginResponse.getRefreshToken();
+
+    RefreshToken savedToken =
+            refreshTokenRepository
+                    .findByToken(refreshToken)
+                    .orElseThrow();
+
+    savedToken.setExpiryDate(
+            Instant.now().minusSeconds(60)
+    );
+
+    refreshTokenRepository.save(savedToken);
+
+    RefreshTokenRequest request =
+            new RefreshTokenRequest();
+
+    request.setRefreshToken(
+            refreshToken
+    );
+
+    assertThrows(
+            TokenExpiredException.class,
+            () -> authService.refreshToken(
+                    request
+            )
+    );
+
+    boolean tokenStillExists =
+            refreshTokenRepository
+                    .findByToken(refreshToken)
+                    .isPresent();
+
+    assertFalse(tokenStillExists);
+}  
 }
