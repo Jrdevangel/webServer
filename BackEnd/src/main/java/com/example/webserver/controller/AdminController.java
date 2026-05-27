@@ -1,20 +1,30 @@
 package com.example.webserver.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.webserver.entity.UserEntity;
+import com.example.webserver.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
+
+    private final UserService userService;
+
+    public AdminController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/dashboard")
     public String dashboard() {
         return "Admin dashboard";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
-    public String users() {
-        return "Admin users endpoint";
+    public List<UserEntity> getAllUsers() {
+        return userService.findAllUsers();
     }
 }
