@@ -2,10 +2,10 @@ package com.example.webserver.service;
 
 import com.example.webserver.entity.RefreshToken;
 import com.example.webserver.entity.UserEntity;
-import com.example.webserver.exception.TokenExpiredException;
 import com.example.webserver.exception.TokenReuseException;
 import com.example.webserver.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -62,29 +62,34 @@ public class RefreshTokenService {
         return createRefreshToken(oldToken.getUser());
     }
 
-    public void verifyExpiration(RefreshToken token) {
-
-        if (token.getExpiryDate()
-                .isBefore(Instant.now())) {
-
-            refreshTokenRepository.delete(token);
-
-            throw new TokenExpiredException(
-                    "Refresh token expired"
-            );
-        }
+    @Transactional(
+        propagation = Propagation.REQUIRES_NEW
+    )
+    public boolean isExpired(
+        RefreshToken token
+    ) {
+    
+        return token.getExpiryDate()
+        .isBefore(Instant.now());
     }
 
-    @Transactional
-    public void revokeToken(String token) {
-
-        RefreshToken refreshToken = refreshTokenRepository
-                .findByToken(token)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Refresh token not found"
-                        ));
-                
-        refreshTokenRepository.delete(refreshToken);
+    @Transactional(
+        propagation = Propagation.REQUIRES_NEW
+    )
+    public void revokeToken(
+            String token
+    ) {
+    
+        RefreshToken refreshToken =
+                refreshTokenRepository
+                        .findByToken(token)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Refresh token not found"
+                                ));
+    
+        refreshTokenRepository.delete(
+                refreshToken
+        );
     }
 }

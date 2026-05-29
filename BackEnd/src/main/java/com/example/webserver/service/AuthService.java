@@ -2,6 +2,7 @@ package com.example.webserver.service;
 
 import com.example.webserver.entity.Role;
 import com.example.webserver.entity.UserEntity;
+import com.example.webserver.exception.TokenExpiredException;
 import com.example.webserver.dto.AuthResponse;
 import com.example.webserver.dto.LoginRequest;
 import com.example.webserver.dto.LogoutRequest;
@@ -74,26 +75,54 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse refreshToken(RefreshTokenRequest request) {
+    public AuthResponse refreshToken(
+        RefreshTokenRequest request
+    ) {
 
-        RefreshToken oldToken = refreshTokenService.findByToken(request.getRefreshToken());
+        RefreshToken oldToken =
+                refreshTokenService.findByToken(
+                        request.getRefreshToken()
+                );
 
-        refreshTokenService.verifyExpiration(oldToken);
+        if (refreshTokenService
+                .isExpired(oldToken)) {
 
-        RefreshToken newToken = refreshTokenService.rotateRefreshToken(oldToken);
+            refreshTokenService.revokeToken(
+                    oldToken.getToken()
+            );
 
-        UserEntity user = newToken.getUser();
+            throw new TokenExpiredException(
+                    "Refresh token expired"
+            );
+        }
 
-        String accessToken = jwtService.generateToken(user.getUsername());
+        RefreshToken newToken =
+                refreshTokenService
+                        .rotateRefreshToken(
+                                oldToken
+                        );
 
-        return new AuthResponse(accessToken, newToken.getToken());
+        UserEntity user =
+                newToken.getUser();
+
+        String accessToken =
+                jwtService.generateToken(
+                        user.getUsername()
+                );
+
+        return new AuthResponse(
+                accessToken,
+                newToken.getToken()
+        );
     }
 
     @Transactional
-    public void logout(LogoutRequest request) {
+    public void logout(
+            LogoutRequest request
+    ) {
 
         refreshTokenService.revokeToken(
-            request.getRefreshToken()
+                request.getRefreshToken()
         );
     }
-}
+}   

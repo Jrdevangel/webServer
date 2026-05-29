@@ -353,17 +353,17 @@ class AuthServiceTest {
     );
 
     assertThrows(
-            TokenExpiredException.class,
-            () -> authService.refreshToken(
-                    request
-            )
-    );
+        TokenExpiredException.class,
+        () -> authService.refreshToken(
+                request
+        )
+);
 
-    boolean tokenStillExists =
-            refreshTokenRepository
-                    .findByToken(refreshToken)
-                    .isPresent();
+        boolean tokenStillExists =
+                refreshTokenRepository
+                        .findByToken(refreshToken)
+                        .isPresent();
 
-    assertFalse(tokenStillExists);
+        assertFalse(tokenStillExists);
 }  
 }
