@@ -1,11 +1,11 @@
 package com.example.webserver.exception;
 
-public class InvalidTokenException 
+public class UserNotFoundException 
         extends RuntimeException {
-        
-    public InvalidTokenException(
+    
+    public UserNotFoundException(
             String message
     ) {
         super(message);
-    }  
+    }
 }

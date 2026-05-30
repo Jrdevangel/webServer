@@ -1,11 +1,11 @@
 package com.example.webserver.exception;
 
-public class InvalidTokenException 
+public class UserAlreadyExistException 
         extends RuntimeException {
-        
-    public InvalidTokenException(
+
+    public UserAlreadyExistException(
             String message
     ) {
         super(message);
-    }  
+    }
 }

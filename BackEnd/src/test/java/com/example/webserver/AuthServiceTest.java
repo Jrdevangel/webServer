@@ -4,6 +4,7 @@ import com.example.webserver.dto.RegisterRequest;
 import com.example.webserver.entity.RefreshToken;
 import com.example.webserver.entity.UserEntity;
 import com.example.webserver.exception.TokenExpiredException;
+import com.example.webserver.exception.TokenReuseException;
 import com.example.webserver.repository.RefreshTokenRepository;
 import com.example.webserver.repository.UserRepository;
 import com.example.webserver.service.AuthService;
@@ -21,7 +22,8 @@ import com.example.webserver.dto.LoginRequest;
 import com.example.webserver.dto.LogoutRequest;
 import com.example.webserver.dto.RefreshTokenRequest;
 
-import org.springframework.security.authentication.BadCredentialsException;
+import com.example.webserver.service.RefreshTokenService;
+import com.example.webserver.exception.InvalidCredentialsException;
 
 @SpringBootTest
 class AuthServiceTest {
@@ -34,6 +36,9 @@ class AuthServiceTest {
 
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     @BeforeEach
     void cleanDatabase() {
@@ -105,7 +110,7 @@ class AuthServiceTest {
         loginRequest.setPassword("WrongPassword123!");
 
         assertThrows(
-            BadCredentialsException.class,
+            InvalidCredentialsException.class,
                 () -> authService.login(loginRequest)
         );
     }
@@ -120,7 +125,7 @@ class AuthServiceTest {
         loginRequest.setPassword("SomePassword123!");
 
         assertThrows(
-            BadCredentialsException.class,
+            InvalidCredentialsException.class,
                 () -> authService.login(loginRequest)
         );
     }
@@ -303,10 +308,9 @@ class AuthServiceTest {
         );
 
         assertThrows(
-                RuntimeException.class,
-                () -> authService.refreshToken(
-                        request
-                )
+                TokenReuseException.class,
+                () -> refreshTokenService
+                .revokeToken("invalid")
         );
     }
 

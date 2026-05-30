@@ -1,11 +1,11 @@
 package com.example.webserver.exception;
 
-public class InvalidTokenException 
+public class ResourceNotFoundException 
         extends RuntimeException {
-        
-    public InvalidTokenException(
+    
+    public ResourceNotFoundException(
             String message
     ) {
         super(message);
-    }  
+    }
 }

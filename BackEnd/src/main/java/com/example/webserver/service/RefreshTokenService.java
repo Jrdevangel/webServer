@@ -7,6 +7,7 @@ import com.example.webserver.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.webserver.exception.InvalidTokenException;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -38,16 +39,16 @@ public class RefreshTokenService {
     public RefreshToken findByToken(String token) {
 
         if (token == null || token.isBlank()) {
-            throw new IllegalArgumentException(
+            throw new InvalidTokenException(
                     "Refresh token is required"
             );
         }
 
         return refreshTokenRepository.findByToken(token)
-                .orElseThrow(() ->
-                        new TokenReuseException(
-                                "Refresh token reuse detected"
-                        ));
+            .orElseThrow(() ->
+            new TokenReuseException(
+                "Refresh token reuse detected"
+            ));
     }
 
     public void deleteByUser(UserEntity user) {
@@ -84,8 +85,8 @@ public class RefreshTokenService {
                 refreshTokenRepository
                         .findByToken(token)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Refresh token not found"
+                                new TokenReuseException(
+                                        "Refresh token reuse detected"
                                 ));
     
         refreshTokenRepository.delete(

@@ -1,11 +1,11 @@
 package com.example.webserver.exception;
 
-public class InvalidTokenException 
+public class UnauthorizedOperationException 
         extends RuntimeException {
-        
-    public InvalidTokenException(
+    
+    public UnauthorizedOperationException(
             String message
     ) {
         super(message);
-    }  
+    }
 }
