@@ -5,11 +5,10 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/webserver_db
-    username: jrdevangel
-    password: iMacniaco
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
-    open-in-view: false
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -17,7 +16,3 @@ spring:
   sql:
     init:
       mode: never
-
-jwt:
-  secret: ${JWT_SECRET}
-  expiration: 86400000

@@ -1,4 +1,8 @@
 spring:
+  config:
+    activate:
+      on-profile: prod
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -10,8 +14,6 @@ spring:
       ddl-auto: validate
     show-sql: false
 
-app:
-  security:
-    admin:
-      username: ${ADMIN_USERNAME}
-      password: ${ADMIN_PASSWORD}
+  sql:
+    init:
+      mode: never
