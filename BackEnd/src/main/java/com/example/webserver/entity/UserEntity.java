@@ -27,10 +27,11 @@ public class UserEntity {
 
     }
 
-    public UserEntity(String username,
-                      String email, 
-                      String password,
-                      Role role) {
+    public UserEntity(
+            String username,
+            String email, 
+            String password,
+            Role role) {
         this.username = username;
         this.email = email;
         this.password = password;
