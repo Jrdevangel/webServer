@@ -1,66 +1,80 @@
 # Backend Module
 
-Spring Boot backend module implementing user management with JWT-based authentication and secure session handling.
+Spring Boot backend module implementing secure authentication, authorization, JWT session management, and role-based access control (RBAC).
 
 ## 🚀 Current Features
 
 The backend currently includes:
 
-- Stateless JWT-based authentication
-- Persistent refresh token management
-- Secure refresh token rotation strategy
-- Centralized exception handling
-- Service-layer authentication (AuthService)
-- DTO validation using Jakarta Validation
-- Logout endpoint with refresh token revocation
-- Token replay/reuse protection
-- Refresh token persistence with PostgreSQL
-- Manual API verification using Postman
+* Stateless JWT-based authentication
+* Persistent refresh token management
+* Secure refresh token rotation strategy
+* Logout endpoint with refresh token revocation
+* Token replay/reuse protection
+* Centralized HTTP exception handling
+* DTO validation using Jakarta Validation
+* Role-Based Access Control (RBAC)
+* Route-level authorization with Spring Security
+* Method-level authorization using `@PreAuthorize`
+* Protected Swagger/OpenAPI access
+* Refresh token persistence with PostgreSQL
+* Manual API verification using Postman
+
+---
 
 ## 🧩 Module Structure
 
+```text
 com.example.webserver
 
 ├── config
+│   └── SecurityConfig.java
 ├── controller
-│   └── AuthController.java
+│   ├── AuthController.java
+│   ├── UserController.java
+│   └── AdminController.java
 ├── dto
 │   ├── LoginRequest.java
 │   ├── RegisterRequest.java
 │   ├── RefreshTokenRequest.java
 │   ├── LogoutRequest.java
-│   └── AuthResponse.java
+│   ├── AuthResponse.java
+│   └── UserProfileResponse.java
 ├── entity
 │   ├── UserEntity.java
-│   └── RefreshToken.java
+│   ├── RefreshToken.java
+│   └── Role.java
 ├── exception
 │   ├── GlobalExceptionHandler.java
+│   ├── InvalidCredentialsException.java
+│   ├── UserAlreadyExistException.java
+│   ├── UserNotFoundException.java
 │   ├── TokenExpiredException.java
 │   └── TokenReuseException.java
 ├── repository
 │   ├── UserRepository.java
-│   ├── JpaUserRepository.java
-│   ├── RefreshTokenRepository.java
-│   └── memory/InMemoryUserRepository.java
+│   └── RefreshTokenRepository.java
 ├── security
 │   ├── JwtService.java
-│   └── JwtAuthenticationFilter.java
+│   ├── JwtAuthenticationFilter.java
+│   └── CustomUserDetailsService.java
 ├── service
 │   ├── AuthService.java
 │   ├── UserService.java
 │   └── RefreshTokenService.java
 └── resources
+```
 
 ---
 
-## 🔐 Authentication & Security
+## 🔐 Authentication & Authorization
 
 ### JWT-Based Authentication
 
 The system uses stateless authentication via JWT:
 
-- Access tokens (short-lived)
-- Refresh tokens (persistent, stored in DB)
+* Access Tokens (short-lived)
+* Refresh Tokens (persistent and stored in database)
 
 ### Authentication Flow
 
@@ -84,71 +98,118 @@ Access Token + Refresh Token
 
 ---
 
-### Token Lifecycle
+### Refresh Token Strategy
+
+* Refresh tokens are persisted in PostgreSQL
+* Each refresh token has an expiration date
+* Tokens are rotated on every refresh request
+* Old refresh tokens are revoked
+* Logout invalidates refresh tokens
+* Reused, expired, or revoked refresh tokens trigger security exceptions
+
+This design mitigates replay attacks and improves session security.
+
+---
+
+## 🛡 Role-Based Access Control (RBAC)
+
+The backend implements RBAC using Spring Security authorities.
+
+### Available Roles
 
 ```text
-Client
-  │
-  ├── POST /api/auth/login
-  │        ↓
-  │   Access Token + Refresh Token
-  │
-  ├── Access Token expires
-  │
-  ├── POST /api/auth/refresh
-  │        ↓
-  │   New Access Token + New Refresh Token
-  │
-  └── POST /api/auth/logout
-           ↓
-      Refresh Token revoked
-           ↓
-      Reused or revoked refresh token rejected (403 Forbidden)
+USER
+ADMIN
+```
+
+### Authority Mapping
+
+Roles are automatically mapped to Spring Security authorities:
+
+```text
+USER  → ROLE_USER
+ADMIN → ROLE_ADMIN
+```
+
+via:
+
+```java
+SimpleGrantedAuthority(
+    "ROLE_" + user.getRole().name()
+)
+```
+
+### Route-Level Authorization
+
+Configured in:
+
+```text
+SecurityConfig.java
+```
+
+Protected routes:
+
+```text
+/api/user/**   → USER or ADMIN
+/api/admin/**  → ADMIN only
+```
+
+### Method-Level Authorization
+
+Method security is enabled using:
+
+```java
+@EnableMethodSecurity
+```
+
+Example:
+
+```java
+@PreAuthorize("hasRole('ADMIN')")
 ```
 
 ---
 
-### Refresh Token Strategy
+## 🔄 Authentication Endpoints
 
-- Refresh tokens are stored in database
-- Each token has an expiration date
-- Tokens are **rotated on use**:
-  - Old token is deleted
-  - New token is issued
-- Tokens can be revoked on logout
-- Expired, reused, or revoked tokens trigger security exceptions
-
-This prevents replay attacks and improves session security.
-
-### 🔄 Auth Endpoints
-
-| Method | Endpoint              | Description |
-|--------|----------------------|-------------|
-| POST   | /api/auth/register   | Register new user |
-| POST   | /api/auth/login      | Authenticate user |
-| POST   | /api/auth/refresh    | Refresh access token |
-| POST   | /api/auth/logout     | Revoke refresh token |
+| Method | Endpoint             | Description          |
+| ------ | -------------------- | -------------------- |
+| POST   | `/api/auth/register` | Register new user    |
+| POST   | `/api/auth/login`    | Authenticate user    |
+| POST   | `/api/auth/refresh`  | Refresh access token |
+| POST   | `/api/auth/logout`   | Revoke refresh token |
 
 ---
 
 ## 🧠 Security Layer
 
-### JwtAuthenticationFilter (Request Authentication Layer)
+### JwtAuthenticationFilter
+
+The request authentication layer:
 
 * Intercepts incoming requests
-* Extracts JWT from Authorization header:
+* Extracts JWT from Authorization header
+* Validates JWT signature and expiration
+* Loads authenticated user
+* Injects user into Spring Security `SecurityContext`
+
+Authorization format:
 
 ```http
 Authorization: Bearer <access_token>
 ```
-* Validates token
-* Injects authenticated user into SecurityContext
 
 Public endpoints:
-* /api/auth/login
-* /api/auth/register
-* /api/auth/refresh
-* /api/auth/logout
+
+```text
+/api/auth/register
+/api/auth/login
+/api/auth/refresh
+/swagger-ui/**
+/v3/api-docs/**
+```
+
+All remaining endpoints require authentication.
 
 ---
 
@@ -159,19 +220,21 @@ The backend uses PostgreSQL with Spring Data JPA.
 Current setup:
 
 * PostgreSQL database
-* Hibernate automatic schema updates (`ddl-auto=update`)
-* Automatic table creation and synchronization
+* Hibernate schema synchronization (`ddl-auto=update`)
+* Automatic entity-to-table mapping
 * Environment variable support for credentials
 
-Configuration is managed through:
+Managed via:
 
-`application.yml`
+```text
+application.yml
+```
 
---- 
+---
 
 ## 🐳 Docker Setup
 
-Start the infrastructure:
+Start infrastructure:
 
 ```bash
 docker compose up -d
@@ -188,17 +251,15 @@ Services:
 
 ## ⚠️ Local Development Warning
 
-Do not run the Dockerized backend and the local Spring Boot instance simultaneously.
+Do not run the Dockerized backend and local Spring Boot simultaneously.
 
-The backend container and:
+Both use:
 
-```bash
-mvn spring-boot:run
+```text
+Port 8080
 ```
 
-both use port `8080`.
-
-If both are running, Spring Boot will fail with:
+Running both causes:
 
 ```text
 Port 8080 was already in use
@@ -208,29 +269,39 @@ Port 8080 was already in use
 
 ## ✅ API Verification
 
-The authentication flow has been manually verified using Postman.
+The backend has been manually verified using Postman.
 
-Validated endpoints:
+Validated flows:
 
-* Register (`/api/auth/register`)
-* Login (`/api/auth/login`)
-* Refresh token persistence and validation in PostgreSQL
-* Refresh token generation and rotation
+* Register
+* Login
+* JWT authentication
+* Refresh token persistence
+* Refresh token rotation
 * Logout token revocation
-* JWT issuance and validation
+* RBAC (`USER` vs `ADMIN`)
+* Protected endpoints
+* JWT authorization via Bearer token
 
 ---
 
 ## 📈 Architectural Maturity
-* Clean architecture (Controller → Service → Repository)
-* Separation of concerns (AuthService introduced)
+
+Current backend maturity includes:
+
+* Clean layered architecture (Controller → Service → Repository)
 * JWT authentication
-* Secure password handling (BCrypt)
-* Stateful refresh token management
+* Refresh token persistence
 * Refresh token rotation
 * Logout + token revocation
-* Token replay/reuse protection
-* DTO validation (Jakarta Validation)
-* Centralized exception handling
+* Replay/reuse attack protection
+* BCrypt password hashing
+* DTO validation
+* Global exception handling
+* RBAC authorization
+* Route-level security
+* Method-level authorization
+* Protected Swagger/OpenAPI
+* PostgreSQL persistence
 * Dockerized infrastructure
-* Postman integration for automated testing
+* Postman verification workflow
