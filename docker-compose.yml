@@ -4,12 +4,21 @@ services:
     image: postgres:16
     container_name: postgres-webserver
     restart: unless-stopped
+
     environment:
       POSTGRES_DB: webserver_db
-      POSTGRES_USER: jrdevangel
+      POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d webserver_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
     networks:
       - webserver_net
 
@@ -17,16 +26,18 @@ services:
     build: ./BackEnd
     container_name: backend-webserver
     restart: unless-stopped
+
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
     ports:
       - "8080:8080"
 
     environment:
-      SPRING_PROFILES_ACTIVE: db
+      SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/webserver_db
-      SPRING_DATASOURCE_USERNAME: jrdevangel
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
 
@@ -37,8 +48,10 @@ services:
     build: ./FrontEnd
     container_name: frontend-webserver
     restart: unless-stopped
+
     depends_on:
       - backend
+
     networks:
       - webserver_net
 
@@ -46,16 +59,20 @@ services:
     image: caddy:latest
     container_name: caddy-proxy
     restart: unless-stopped
+
     ports:
       - "80:80"
       - "443:443"
+
     volumes:
       - caddy_data:/data
       - caddy_config:/config
       - ./Caddyfile:/etc/caddy/Caddyfile
+
     depends_on:
       - backend
       - frontend
+
     networks:
       - webserver_net
 
