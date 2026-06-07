@@ -240,6 +240,28 @@ Start infrastructure:
 docker compose up -d
 ```
 
+---
+
+## 🐳 Docker Hardening
+
+The Docker environment includes:
+
+* PostgreSQL healthcheck
+* Ordered startup using `depends_on + service_healthy`
+* Environment-based secrets
+* Persistent Docker volumes
+* Production profile activation
+
+Health validation:
+
+```text
+pg_isready -U ${DB_USERNAME} -d webserver_db
+```
+
+This guarantees PostgreSQL readiness before backend startup.
+
+---
+
 Services:
 
 * PostgreSQL database
@@ -305,3 +327,80 @@ Current backend maturity includes:
 * PostgreSQL persistence
 * Dockerized infrastructure
 * Postman verification workflow
+
+---
+
+## ⚙️ Environment Profiles
+
+The backend uses profile-based configuration.
+
+### Shared Configuration
+
+```text
+application.yml
+```
+
+Contains common configuration:
+
+* JWT configuration
+* Shared JPA settings
+* `open-in-view=false`
+
+### Development Profile
+
+```text
+application-dev.yml
+```
+
+Used for local development:
+
+* PostgreSQL local database
+* `ddl-auto=update`
+* SQL logs enabled
+
+Run:
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+### Production Profile
+
+```text
+application-prod.yml
+```
+
+Used for Docker/production deployments:
+
+* Externalized datasource
+* `ddl-auto=validate`
+* SQL logging disabled
+* Environment variable-based secrets
+
+Activated automatically in Docker:
+
+```text
+SPRING_PROFILES_ACTIVE=prod
+```
+
+---
+
+## 🔐 Environment Variables
+
+Sensitive values are externalized and never committed to Git.
+
+Required variables:
+
+```env
+DB_USERNAME=your_db_username
+POSTGRES_PASSWORD=your_postgres_password
+JWT_SECRET=your_jwt_secret
+```
+
+The repository includes:
+
+```text
+.env.example
+```
+
+for secure environment setup.
