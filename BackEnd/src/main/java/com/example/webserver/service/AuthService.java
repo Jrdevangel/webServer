@@ -49,6 +49,7 @@ public class AuthService {
             );
 
         } catch (Exception e) {
+
             throw new InvalidCredentialsException(
                     "Invalid username or password"
             );
