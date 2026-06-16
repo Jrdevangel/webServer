@@ -16,9 +16,12 @@ The backend currently includes:
 * Role-Based Access Control (RBAC)
 * Route-level authorization with Spring Security
 * Method-level authorization using `@PreAuthorize`
-* Protected Swagger/OpenAPI access
+* Swagger/OpenAPI integration
 * Refresh token persistence with PostgreSQL
 * Manual API verification using Postman
+* Spring Boot Actuator health endpoint
+* Profile-based configuration (`dev` / `prod`)
+* Environment variable secret externalization
 
 ---
 
@@ -207,6 +210,7 @@ Public endpoints:
 /api/auth/refresh
 /swagger-ui/**
 /v3/api-docs/**
+/actuator/health
 ```
 
 All remaining endpoints require authentication.
@@ -323,10 +327,13 @@ Current backend maturity includes:
 * RBAC authorization
 * Route-level security
 * Method-level authorization
-* Protected Swagger/OpenAPI
+* Swagger/OpenAPI integration
 * PostgreSQL persistence
 * Dockerized infrastructure
 * Postman verification workflow
+* Spring Boot Actuator health monitoring
+* Environment-based secret management
+* Profile-based configuration
 
 ---
 
@@ -404,3 +411,29 @@ The repository includes:
 ```
 
 for secure environment setup.
+
+---
+
+## 📊 Observability
+
+The backend includes basic observability using Spring Boot Actuator.
+
+Available endpoint:
+
+```text
+/actuator/health
+```
+
+Used for:
+
+* Health monitoring
+* Infrastructure readiness checks
+* Container orchestration probes
+
+Current exposure:
+
+```text
+/actuator/health → public access
+```
+
+All remaining actuator endpoints remain restricted.
