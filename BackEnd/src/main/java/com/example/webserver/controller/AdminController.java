@@ -1,6 +1,6 @@
 package com.example.webserver.controller;
 
-import com.example.webserver.entity.UserEntity;
+import com.example.webserver.dto.UserResponse;
 import com.example.webserver.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,16 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
-    public List<UserEntity> getAllUsers() {
-        return userService.findAllUsers();
+    public List<UserResponse> getAllUsers() {
+
+    return userService.findAllUsers()
+            .stream()
+            .map(user -> new UserResponse(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getRole()
+            ))
+            .toList();
     }
 }
