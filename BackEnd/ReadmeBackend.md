@@ -22,6 +22,8 @@ The backend currently includes:
 * Spring Boot Actuator health endpoint
 * Profile-based configuration (`dev` / `prod`)
 * Environment variable secret externalization
+* Swagger disabled in production
+* Production-ready environment configuration
 
 ---
 
@@ -208,8 +210,8 @@ Public endpoints:
 /api/auth/register
 /api/auth/login
 /api/auth/refresh
-/swagger-ui/**
-/v3/api-docs/**
+/swagger-ui/** (development only)
+/v3/api-docs/** (development only)
 /actuator/health
 ```
 
@@ -224,7 +226,9 @@ The backend uses PostgreSQL with Spring Data JPA.
 Current setup:
 
 * PostgreSQL database
-* Hibernate schema synchronization (`ddl-auto=update`)
+* Profile-based Hibernate configuration
+    * `ddl-auto=update` (development)
+    * `ddl-auto=validate` (production)
 * Automatic entity-to-table mapping
 * Environment variable support for credentials
 
@@ -252,7 +256,7 @@ The Docker environment includes:
 
 * PostgreSQL healthcheck
 * Ordered startup using `depends_on + service_healthy`
-* Environment-based secrets
+* Environment variable-based secrets
 * Persistent Docker volumes
 * Production profile activation
 
@@ -334,6 +338,8 @@ Current backend maturity includes:
 * Spring Boot Actuator health monitoring
 * Environment-based secret management
 * Profile-based configuration
+* Production profile configuration
+* Externalized production secrets
 
 ---
 
@@ -380,9 +386,11 @@ application-prod.yml
 Used for Docker/production deployments:
 
 * Externalized datasource
+* Externalized JWT secret
 * `ddl-auto=validate`
 * SQL logging disabled
-* Environment variable-based secrets
+* Swagger/OpenAPI disabled
+* SQL initialization disabled
 
 Activated automatically in Docker:
 
@@ -399,8 +407,9 @@ Sensitive values are externalized and never committed to Git.
 Required variables:
 
 ```env
+DB_URL=jdbc:postgresql://localhost:5432/webserver_db
 DB_USERNAME=your_db_username
-POSTGRES_PASSWORD=your_postgres_password
+DB_PASSWORD=your_db_password
 JWT_SECRET=your_jwt_secret
 ```
 
@@ -416,7 +425,8 @@ for secure environment setup.
 
 ## 📊 Observability
 
-The backend includes basic observability using Spring Boot Actuator.
+Only the health endpoint is publicly exposed.
+All remaining Actuator endpoints require authentication or remain disabled.
 
 Available endpoint:
 
