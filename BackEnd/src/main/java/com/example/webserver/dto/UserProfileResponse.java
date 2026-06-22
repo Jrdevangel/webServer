@@ -1,19 +1,9 @@
 package com.example.webserver.dto;
 
-public class UserProfileResponse {
-    private String username;
-    private String role;
-    
-    public UserProfileResponse(String username, String role) {
-        this.username = username;
-        this.role = role;
-    }
+import java.util.Set;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getRole() {
-        return role;
-    }
+public record UserProfileResponse(
+        String username,
+        Set<String> roles
+) {
 }

@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/user")
@@ -15,12 +16,14 @@ public class UserController {
 
         String username = authentication.getName();
 
-        String role = authentication.getAuthorities()
+        Set<String> roles = authentication.getAuthorities()
                 .stream()
-                .findFirst()
                 .map(auth -> auth.getAuthority())
-                .orElse("NO_ROLE");
+                .collect(java.util.stream.Collectors.toSet());
 
-        return new UserProfileResponse(username, role);
+        return new UserProfileResponse(
+            username, 
+            roles
+        );
     }
 }

@@ -32,7 +32,7 @@ public class AdminController {
                     user.getId(),
                     user.getUsername(),
                     user.getEmail(),
-                    user.getRole()
+                    user.getRoles()
             ))
             .toList();
     }

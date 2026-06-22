@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.webserver.entity.Role;
 import com.example.webserver.repository.UserRepository;
 import com.example.webserver.entity.UserEntity;
+import java.util.Set;
 
 @Configuration
 @Profile("local")
@@ -27,7 +28,7 @@ public class DataInitializer {
                         "admin",
                         "admin@test.com",
                         passwordEncoder.encode("adminpass"),
-                        Role.ADMIN
+                        Set.of(Role.ADMIN)
                     )
                 );
 
@@ -36,7 +37,7 @@ public class DataInitializer {
                         "user",
                         "user@test.com",
                         passwordEncoder.encode("userpass"),
-                        Role.USER
+                        Set.of(Role.USER)
                     )
                 );
             }
