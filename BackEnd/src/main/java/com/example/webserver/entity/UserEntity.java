@@ -1,5 +1,8 @@
 package com.example.webserver.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -19,9 +22,14 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "user_roles", 
+        joinColumns = @JoinColumn(name = "user_id")
+    )
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @Column(name = "role", nullable = false)
+    private Set<Role> roles = new HashSet<>();
 
     protected UserEntity() {
 
@@ -29,13 +37,13 @@ public class UserEntity {
 
     public UserEntity(
             String username,
-            String email, 
+            String email,
             String password,
-            Role role) {
+            Set<Role> roles) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.roles = new HashSet<>(roles);
     }
     
     public Long getId() {
@@ -54,8 +62,8 @@ public class UserEntity {
         return password;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
     public void setEmail(String email) {
@@ -66,7 +74,7 @@ public class UserEntity {
         this.password = password;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = new HashSet<>(roles);
     }
 }

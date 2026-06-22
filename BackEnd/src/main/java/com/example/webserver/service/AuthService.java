@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.webserver.exception.InvalidCredentialsException;
 import com.example.webserver.exception.UserNotFoundException;
+import java.util.Set;
 
 @Service
 public class AuthService {
@@ -83,7 +84,7 @@ public class AuthService {
                 request.getUsername(),
                 request.getEmail(),
                 request.getPassword(),
-                Role.USER
+                Set.of(Role.USER)
         );
 
         userService.saveUser(user);
