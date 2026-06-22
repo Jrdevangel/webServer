@@ -14,11 +14,11 @@ import io.swagger.v3.oas.annotations.Hidden;
 
 @RestController
 @Hidden
-public class WebServerController {
+public class HomeController {
 
     private final DashboardService dashboardService;
 
-    public WebServerController(DashboardService dashboardService) {
+    public HomeController(DashboardService dashboardService) {
         this.dashboardService = dashboardService;
     }
 
