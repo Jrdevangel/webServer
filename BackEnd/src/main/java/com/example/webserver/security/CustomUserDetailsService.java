@@ -1,7 +1,6 @@
 package com.example.webserver.security;
 
 import com.example.webserver.repository.UserRepository;
-import java.util.List;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
