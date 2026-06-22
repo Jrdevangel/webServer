@@ -28,15 +28,23 @@ public class HomeController {
     }
 
     @GetMapping("/home")
-    public String home(Principal user) {
-        String name = (user != null) ? user.getName() : "Guest";
-        return "Welcome, " + name + "!";
+    public String home(Principal principal) {
+
+        String username = principal != null
+                ? principal.getName() 
+                : "Guest";
+        
+        return "Welcome, " + username + "!";
     }
 
     @PostMapping("/dashboard")
-    public Map<String, String> postDashboardMessage(Principal user) {
-        String name = (user != null) ? user.getName() : "Guest";
-        String message = dashboardService.dashboardMessage(name);
+    public Map<String, String> postDashboardMessage(Principal principal) {
+
+        String username = principal != null
+                ? principal.getName()
+                : "Guest";
+
+        String message = dashboardService.dashboardMessage(username);
 
         return Map.of("message", message);
     }
