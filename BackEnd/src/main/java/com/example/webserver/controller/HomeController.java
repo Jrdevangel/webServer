@@ -3,6 +3,7 @@ package com.example.webserver.controller;
 import java.security.Principal;
 import java.util.Map;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,7 @@ public class HomeController {
         return "Welcome, " + username + "!";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/dashboard")
     public Map<String, String> postDashboardMessage(Principal principal) {
 

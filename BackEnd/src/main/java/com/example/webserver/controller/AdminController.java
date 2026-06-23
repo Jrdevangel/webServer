@@ -2,6 +2,7 @@ package com.example.webserver.controller;
 
 import com.example.webserver.dto.UserResponse;
 import com.example.webserver.service.UserService;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ public class AdminController {
         this.userService = userService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/dashboard")
     public String dashboard() {
         return "Admin dashboard";
