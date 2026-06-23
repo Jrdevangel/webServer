@@ -11,6 +11,8 @@ import com.example.webserver.entity.UserEntity;
 import com.example.webserver.service.UserService;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -37,6 +39,7 @@ public class UserController {
         );
     }
 
+    @PreAuthorize("#username == authentication.name or hasRole('ADMIN')")
     @GetMapping("/{username}")
     public UserProfileResponse getUserProfile(
         @PathVariable String username
