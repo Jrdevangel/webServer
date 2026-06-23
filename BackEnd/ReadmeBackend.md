@@ -13,9 +13,9 @@ The backend currently includes:
 * Token replay/reuse protection
 * Centralized HTTP exception handling
 * DTO validation using Jakarta Validation
-* Role-Based Access Control (RBAC)
 * Route-level authorization with Spring Security
-* Method-level authorization using `@PreAuthorize`
+* Method-level authorization using @PreAuthorize
+* Role-Based Access Control (RBAC)
 * Swagger/OpenAPI integration
 * Refresh token persistence with PostgreSQL
 * Manual API verification using Postman
@@ -24,6 +24,7 @@ The backend currently includes:
 * Environment variable secret externalization
 * Swagger disabled in production
 * Production-ready environment configuration
+* Resource-based authorization (ABAC)
 
 ---
 
@@ -120,6 +121,8 @@ This design mitigates replay attacks and improves session security.
 
 The backend implements RBAC using Spring Security authorities.
 
+The authorization model currently combines route-level security with method-level authorization, both backed by Spring Security roles.
+
 ### Available Roles
 
 ```text
@@ -175,6 +178,31 @@ Example:
 
 ---
 
+## Security Architecture
+
+Security Architecture
+
+Request
+    │
+    ▼
+JwtAuthenticationFilter
+    │
+    ▼
+SecurityContext
+    │
+    ▼
+SecurityFilterChain
+(Route authorization)
+    │
+    ▼
+@PreAuthorize
+(Method authorization)
+    │
+    ▼
+Controller
+
+---
+
 ## 🔄 Authentication Endpoints
 
 | Method | Endpoint             | Description          |
@@ -216,6 +244,10 @@ Public endpoints:
 ```
 
 All remaining endpoints require authentication.
+
+Authentication is performed by JwtAuthenticationFilter,
+while authorization is enforced by Spring Security through
+both request matchers and method-level security annotations.
 
 ---
 
@@ -319,27 +351,26 @@ Validated flows:
 
 Current backend maturity includes:
 
-* Clean layered architecture (Controller → Service → Repository)
-* JWT authentication
-* Refresh token persistence
-* Refresh token rotation
-* Logout + token revocation
-* Replay/reuse attack protection
-* BCrypt password hashing
-* DTO validation
-* Global exception handling
-* RBAC authorization
-* Route-level security
-* Method-level authorization
-* Swagger/OpenAPI integration
-* PostgreSQL persistence
-* Dockerized infrastructure
-* Postman verification workflow
-* Spring Boot Actuator health monitoring
-* Environment-based secret management
-* Profile-based configuration
-* Production profile configuration
-* Externalized production secrets
+Authentication
+• JWT
+• Refresh Tokens
+• BCrypt
+
+Authorization
+• RBAC
+• Resource ownership authorization (ABAC)
+• Route-level authorization
+• Method-level authorization
+
+Reliability
+• Global exception handling
+• DTO validation
+
+Infrastructure
+• PostgreSQL
+• Docker
+• Profiles
+• Actuator
 
 ---
 
