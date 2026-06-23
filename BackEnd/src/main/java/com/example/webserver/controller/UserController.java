@@ -39,7 +39,7 @@ public class UserController {
         );
     }
 
-    @PreAuthorize("#username == authentication.name or hasRole('ADMIN')")
+    @PreAuthorize("@userAuthorizationService.canAccessUser(#username, authentication)")
     @GetMapping("/{username}")
     public UserProfileResponse getUserProfile(
         @PathVariable String username
