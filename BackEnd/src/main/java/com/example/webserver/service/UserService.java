@@ -1,6 +1,7 @@
 package com.example.webserver.service;
 
 import com.example.webserver.entity.UserEntity;
+import com.example.webserver.exception.UserNotFoundException;
 import com.example.webserver.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,5 +33,12 @@ public class UserService {
 
     public List<UserEntity> findAllUsers() {
         return userRepository.findAll();
+    }
+
+    public UserEntity getUserByUsername(String username) {
+        
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> 
+                        new UserNotFoundException(username));
     }
 }
